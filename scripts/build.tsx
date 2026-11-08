@@ -41,15 +41,20 @@ async function build() {
   const css = await readFile('src/styles.css', 'utf8');
   const cssName = `assets/site-${createHash('sha256').update(css).digest('hex').slice(0, 10)}.css`;
   await writeOutput(cssName, css);
+  const publicAssets = new Set([
+    'mark.svg', 'media/spatial-prototype.webp', 'media/evidence/welcome_day_stage.webp',
+    'media/azurid-capture-isolation.svg', 'media/azurid-capture-isolation-mobile.svg',
+    ...community.map(story => story.image),
+    ...awards.map(award => award.image),
+    ...projects.flatMap(project => project.evidenceImages?.map(evidence => evidence.path) ?? []),
+    ...profiles.map(profile => `resumes/${profile.pdf}`),
+  ]);
   await Promise.all([
     copyOutput('node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2', 'fonts/manrope.woff2'),
     copyOutput('node_modules/@fontsource-variable/newsreader/files/newsreader-latin-wght-italic.woff2', 'fonts/newsreader-italic.woff2'),
     copyOutput('node_modules/@fontsource-variable/manrope/LICENSE', 'fonts/LICENSE-Manrope.txt'),
     copyOutput('node_modules/@fontsource-variable/newsreader/LICENSE', 'fonts/LICENSE-Newsreader.txt'),
-    ...['mark.svg', 'media/spatial-prototype.webp', 'media/evidence/welcome_day_stage.webp',
-      ...community.map(story => story.image), ...awards.map(award => award.image),
-      ...profiles.map(profile => `resumes/${profile.pdf}`),
-    ].map(path => copyOutput(`public/${path}`, path)),
+    ...Array.from(publicAssets, path => copyOutput(`public/${path}`, path)),
   ]);
 
   await Promise.all(routes.map(async route => {

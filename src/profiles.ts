@@ -14,16 +14,16 @@ export const profiles = [
     title: 'Engineering portfolio',
     statement: 'I build AI systems for language and 3D environments, and I like getting close to the math and software that make them work.',
     description: 'Selected work in applied AI, spatial computing, and software engineering, alongside student leadership at ESI-SBA.',
-    projects: ['arabic-structured-ie', 'webgpu-spatial-engine', 'numpy-mlp-from-scratch', 'stethospeech-silent-speech'],
+    projects: ['operations-intelligence-hub', 'azuridtwinup', 'arabic-structured-ie', 'numpy-mlp-from-scratch'],
     pdf: 'Youcef_Achouri_CV_English.pdf',
   },
   {
     slug: 'applied-ai',
     label: 'Applied AI',
     title: 'Applied AI engineering',
-    statement: 'I work on turning model outputs into something a system can use, from Arabic text extraction to segmentation in a 3D scene.',
-    description: 'Local LLMs, model integration, computer vision and practical evaluation.',
-    projects: ['arabic-structured-ie', 'webgpu-spatial-engine', 'numpy-mlp-from-scratch'],
+    statement: 'I build workflows around models, from agents that coordinate an incident response to Arabic text extraction with a defined output contract.',
+    description: 'Agent orchestration, local LLMs, model integration and computer vision.',
+    projects: ['operations-intelligence-hub', 'arabic-structured-ie', 'webgpu-spatial-engine', 'numpy-mlp-from-scratch'],
     pdf: 'Youcef_Achouri_CV_Applied_AI.pdf',
   },
   {
@@ -39,16 +39,54 @@ export const profiles = [
     slug: 'software-spatial',
     label: 'Software & spatial',
     title: 'Software & spatial systems',
-    statement: 'I build software around difficult inputs, from spatial scans that have to line up in a browser to language models that need a predictable output contract.',
-    description: 'Browser 3D, spatial pipelines, typed interfaces and backend integration.',
-    projects: ['webgpu-spatial-engine', 'arabic-structured-ie', 'numpy-mlp-from-scratch'],
+    statement: 'I work on browser viewers for inspection captures and spatial scans, with a focus on how the software handles real data and recovers when something fails.',
+    description: 'Industrial 3D viewing, spatial pipelines and backend integration.',
+    projects: ['azuridtwinup', 'webgpu-spatial-engine', 'operations-intelligence-hub'],
     pdf: 'Youcef_Achouri_CV_Software_Spatial.pdf',
   },
 ] as const;
 
 export type Profile = typeof profiles[number];
 
-export const additionalWork = [
+export interface SupportingProject {
+  title: string;
+  description: string;
+  category: string;
+  href?: string;
+  projectSlug?: string;
+}
+
+const voicePrototype: SupportingProject = {
+  title: 'Voice tutoring prototype',
+  description: 'Connected a React tutoring interface to Vapi voice sessions, rendered final transcripts, and stored session metadata in Supabase.',
+  category: 'Application engineering',
+};
+
+const clinicalWorkflow: SupportingProject = {
+  title: 'Clinical consultation workflow',
+  description: 'A Django REST and React prototype for multidisciplinary case meetings, with configurable forms, attachment handling and audit logging.',
+  category: 'Workflow software',
+};
+
+const panoriha: SupportingProject = {
+  title: 'Panoriha Advanced',
+  description: 'A private spatial tour management prototype with a NestJS API, Prisma data models and MinIO object storage.',
+  category: 'Full-stack systems',
+};
+
+export const additionalWork: SupportingProject[] = [
+  {
+    title: 'From panoramas to 3D scenes',
+    description: 'A Babylon.js prototype for projecting segmentation masks onto scanned geometry.',
+    projectSlug: 'webgpu-spatial-engine',
+    category: 'Spatial vision',
+  },
+  {
+    title: 'StethoSpeech',
+    description: 'A research reproduction with a held-out evaluation of predicted speech features.',
+    projectSlug: 'stethospeech-silent-speech',
+    category: 'Research',
+  },
   {
     title: 'English–French translation',
     description: 'An architecture lab tracing the path from recurrent models through attention to a custom Transformer.',
@@ -61,14 +99,10 @@ export const additionalWork = [
     href: 'https://github.com/youcef-ach/word2vec_from_scratch',
     category: 'Machine learning',
   },
-  {
-    title: 'Voice tutoring prototype',
-    description: 'Connected a React interface to a streaming voice assistant with WebRTC events and live transcripts.',
-    category: 'Application engineering',
-  },
-  {
-    title: 'Industrial 3D GIS',
-    description: 'Private project work involving browser-based site visualization, 360° imagery and object storage for spatial assets.',
-    category: 'Spatial engineering',
-  },
+  voicePrototype,
+  clinicalWorkflow,
+  panoriha,
 ];
+
+export const spatialWork: SupportingProject[] = [panoriha, clinicalWorkflow, voicePrototype];
+export const appliedAiWork: SupportingProject[] = [voicePrototype];

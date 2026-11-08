@@ -21,6 +21,27 @@ function Signal() {
 }
 
 export function Figure({ project, base, detail = false }: { project: Project; base: string; detail?: boolean }) {
+  if (project.slug === 'azuridtwinup') {
+    return <figure className={`project-figure visual-azurid${detail ? ' figure-detail' : ''}`}>
+      <picture>
+        <source media="(max-width: 600px)" srcSet={`${base}media/azurid-capture-isolation-mobile.svg`} width="380" height="367" />
+        <img src={`${base}media/azurid-capture-isolation.svg`} width="1000" height="480" loading="lazy" decoding="async" alt="Two fictional captures reuse station 07. Including the capture ID in the texture key routes each capture to its own cache entry." />
+      </picture>
+      <figcaption><span>Capture-scoped texture lookup</span><span>Architecture diagram</span></figcaption>
+    </figure>;
+  }
+
+  if (project.slug === 'operations-intelligence-hub') {
+    return <figure className={`project-figure visual-operations${detail ? ' figure-detail' : ''}`}>
+      <div className="operations-diagram">
+        <div><small>01 / Intake</small><strong>Incident</strong><span>Route by department</span></div>
+        <div><small>02 / Review</small><strong>Specialist agents</strong><span>Run modules and collect proposals</span></div>
+        <div><small>03 / Decide</small><strong>Executive brief</strong><span>Reconcile conflicting actions</span></div>
+      </div>
+      <figcaption><span>Incident response workflow</span><span>Architecture diagram</span></figcaption>
+    </figure>;
+  }
+
   if (project.slug === 'webgpu-spatial-engine') {
     return <figure className={`project-figure visual-spatial${detail ? ' figure-detail' : ''}`}>
       <img src={`${base}media/spatial-prototype.webp`} width="1920" height="869" loading="lazy" decoding="async" alt="WebGPU prototype showing a scanned interior and a list of panorama viewpoints" />

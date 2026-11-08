@@ -8,6 +8,8 @@ export interface Project {
   stack: string[];
   status: string;
   repo?: string;
+  walkthrough?: boolean;
+  evidenceImages?: { path: string; alt: string; caption: string; width: number; height: number }[];
   lead: string;
   problem: string;
   decisions: { title: string; body: string }[];
@@ -17,6 +19,42 @@ export interface Project {
 }
 
 export const projects: Project[] = [
+  {
+    slug: 'operations-intelligence-hub', number: '05', category: 'Agent orchestration', title: 'Enterprise Operations Intelligence Hub',
+    summary: 'Team Spooka’s third-place hackathon prototype routes operational incidents to specialist agents and turns their responses into a single executive brief.',
+    role: 'AI agents and orchestration', stack: ['Python', 'LangGraph', 'FastAPI', 'Claude'], status: 'NCS Hack 3.0 · June 2026',
+    repo: 'https://github.com/youcef-ach/ncs-hack-operations-intelligence-hub',
+    lead: 'At NCS Hack 3.0, I worked on the AI agents and orchestration for Team Spooka. We built a prototype for internal enterprise workflows and placed third. The team built the application together.',
+    problem: 'An operational incident can involve several departments at once. Each team needs enough context to respond, and a decision maker needs one brief that explains the proposed actions and where they conflict.',
+    decisions: [
+      { title: 'Route by incident', body: 'The LangGraph workflow takes an incident, selects the relevant department modules, and sends each module the context it needs. The modules can run in parallel while agents within a module pass structured results to one another.' },
+      { title: 'Reconcile proposals before briefing', body: 'The orchestration gathers the department outputs, resolves conflicting proposals, and produces an executive brief with the decision and supporting rationale.' },
+      { title: 'Make the workflow inspectable without a model key', body: 'The prototype supports Claude for structured responses and a deterministic mock mode. The mock makes it possible to follow the graph and inspect the output without calling a live model.' },
+    ],
+    outcome: 'Team Spooka placed third at NCS Hack 3.0. The GitHub fork preserves the team’s original June 26–27 commits. The portfolio edition adds local setup instructions and tests for the mock workflows.',
+    limits: 'This was a hackathon prototype. The action layer simulates enterprise side effects and does not connect to real HR, finance or security systems.',
+    facts: [{ label: 'Team result', value: '3rd place' }, { label: 'Event', value: 'NCS Hack 3.0' }],
+    evidenceImages: [
+      { path: 'media/ncs-conflict-report.png', alt: 'The mock dashboard recommends blocking a vendor action until a binding objection is cleared, with next steps for each department.', caption: 'Executive brief from the synthetic vendor conflict scenario · Local mock run', width: 1092, height: 268 },
+      { path: 'media/evidence/ncs_hack_award.webp', alt: 'Team Spooka with their third-place award at NCS Hack', caption: 'Team Spooka · NCS Hack 3.0, June 2026', width: 960, height: 1200 },
+    ],
+  },
+  {
+    slug: 'azuridtwinup', number: '06', category: 'Industrial spatial software', title: 'AzuridTwinUp',
+    summary: 'An industrial browser viewer for navigating 360° inspection captures and inspecting geometry. A viewer hardening checkpoint focused on texture isolation, recovery and trustworthy measurements.',
+    role: 'Product and viewer engineering', stack: ['React', 'Three.js', 'TypeScript', 'KTX2'], status: 'Private product · Viewer B checkpoint',
+    walkthrough: true,
+    lead: 'I work on AzuridTwinUp, a browser-based viewer for navigating industrial inspection stations and examining spatial geometry. This case study describes the Viewer B hardening checkpoint, developed and validated in a separate workspace.',
+    problem: 'When two captures use the same station identifier, a texture lookup needs to know which capture owns it. Separately, switching views or recovering from a failed upload must release resources and allow the next navigation attempt. Measurements need an explicit coordinate frame and units.',
+    decisions: [
+      { title: 'Scope resources to their owners', body: 'The candidate scopes whole-KTX2 lookups by capture ID and keeps GPU resource leases distinct across product revisions. Tests cover shared revisions, independent revisions and both teardown orders.' },
+      { title: 'Recover from interrupted navigation', body: 'The viewer resets the transition when landing confirmation fails. Recovery paths release pending resource leases so the user can select the next station.' },
+      { title: 'Validate inputs at the viewer boundary', body: 'The candidate rejects malformed tile descriptors, normalizes incoming rotations, and reports measurements only when the coordinate frame declares a supported up axis and metre units.' },
+    ],
+    outcome: 'The isolated R5 candidate recorded 104 passing behavioral tests, a successful type check and build, and a delivery archive verified against its file manifest.',
+    limits: 'These checks describe the isolated Viewer B candidate. The hosted revision and production performance need separate verification. The figure uses fictional capture identifiers to explain the cache boundary.',
+    facts: [{ label: 'Behavioral tests passed', value: '104' }, { label: 'Verification scope', value: 'Local R5 build' }],
+  },
   {
     slug: 'arabic-structured-ie', number: '01', category: 'Applied NLP', title: 'Arabic information extraction',
     summary: 'A local language model turns Arabic instructions into structured data that an academic GIS application can validate.',
@@ -90,6 +128,6 @@ export const community = [
 
 export const awards = [
   { title: 'DevFest Hackathon', year: '2023', result: '2nd place', detail: 'Team Infinity · GDG Sidi Bel Abbès', image: 'media/evidence/dev_fest_stage.webp', width: 720, height: 721 },
-  { title: 'NCS Hackathon', year: '2024', result: '3rd place', detail: 'Team award · Numidia Computer Society', image: 'media/evidence/ncs_hack_award.webp', width: 960, height: 1200 },
+  { title: 'NCS Hack 3.0', year: '2026', result: '3rd place', detail: 'Team Spooka · NiT Computer Society Club', image: 'media/evidence/ncs_hack_award.webp', width: 960, height: 1200, projectSlug: 'operations-intelligence-hub' },
   { title: 'ForsaTIC Hackathon', year: '2024', result: 'Participant', detail: 'ESI-SBA delegation · ENSIA, Algiers', image: 'media/evidence/forsatik_team.webp', width: 900, height: 1200 },
 ];

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="480" viewBox="0 0 1000 480" role="img" aria-labelledby="title description">
+  <title id="title">How AzuridTwinUp separates panorama caches by capture</title>
+  <desc id="description">Two different captures both use station 07. Including the capture ID in the texture lookup keeps their panoramas in separate cache entries. Labels are illustrative.</desc>
+  <defs>
+    <pattern id="grid" width="24" height="24" patternUnits="userSpaceOnUse">
+      <path d="M24 0H0V24" fill="none" stroke="#cbd8ca" stroke-width="1"/>
+    </pattern>
+    <marker id="arrow" viewBox="0 0 12 12" refX="10" refY="6" markerWidth="8" markerHeight="8" orient="auto">
+      <path d="m2 2 7 4-7 4" fill="none" stroke="#3c685a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    </marker>
+  </defs>
+  <rect width="1000" height="480" rx="8" fill="#e5eee2"/>
+  <rect x="1" y="1" width="998" height="478" rx="7" fill="url(#grid)" opacity=".68"/>
+  <g font-family="Segoe UI, Arial, sans-serif" fill="#15352d">
+    <text x="56" y="67" font-size="16" font-weight="700" letter-spacing="2.4">AZURIDTWINUP · VIEWER ARCHITECTURE</text>
+    <text x="54" y="120" font-size="42" font-weight="650" letter-spacing="-1.9">Same station ID. Different captures.</text>
+    <text x="56" y="177" font-size="15" font-weight="700" letter-spacing="1.7">PANORAMA REQUEST</text>
+    <text x="624" y="177" font-size="15" font-weight="700" letter-spacing="1.7">CAPTURE-SCOPED CACHE</text>
+    <rect x="56" y="197" width="324" height="88" rx="6" fill="#fcfaf3" stroke="#adbeaf"/>
+    <rect x="56" y="303" width="324" height="88" rx="6" fill="#fcfaf3" stroke="#adbeaf"/>
+    <g transform="translate(74 215)">
+      <rect width="64" height="52" rx="4" fill="#e9d4ad"/>
+      <path d="m9 13 23 5 23-5v26l-23-5-23 5zM32 18v16" fill="none" stroke="#6a4b23" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="45" cy="25" r="3" fill="#6a4b23"/>
+    </g>
+    <g transform="translate(74 321)">
+      <rect width="64" height="52" rx="4" fill="#d2e2dc"/>
+      <path d="m9 13 23 5 23-5v26l-23-5-23 5zM32 18v16" fill="none" stroke="#2f5b50" stroke-width="2" stroke-linejoin="round"/>
+      <circle cx="21" cy="25" r="3" fill="#2f5b50"/>
+    </g>
+    <text x="157" y="233" font-size="20" font-weight="700">Capture A</text>
+    <text x="157" y="261" font-size="18" fill="#4a6057">Station 07</text>
+    <text x="157" y="339" font-size="20" font-weight="700">Capture B</text>
+    <text x="157" y="367" font-size="18" fill="#4a6057">Station 07</text>
+    <path d="M401 241H602" fill="none" stroke="#3c685a" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M401 347H602" fill="none" stroke="#3c685a" stroke-width="2" marker-end="url(#arrow)"/>
+    <rect x="423" y="222" width="151" height="37" rx="18.5" fill="#e5eee2" stroke="#b5c6b6"/>
+    <rect x="423" y="328" width="151" height="37" rx="18.5" fill="#e5eee2" stroke="#b5c6b6"/>
+    <text x="498.5" y="246" text-anchor="middle" font-size="15" font-weight="650">Scope lookup</text>
+    <text x="498.5" y="352" text-anchor="middle" font-size="15" font-weight="650">Scope lookup</text>
+    <rect x="624" y="197" width="320" height="88" rx="6" fill="#174940"/>
+    <rect x="624" y="303" width="320" height="88" rx="6" fill="#174940"/>
+    <circle cx="649" cy="228" r="5" fill="#e9c58c"/>
+    <circle cx="649" cy="334" r="5" fill="#b5d6c8"/>
+    <text x="666" y="234" font-size="17" font-weight="650" fill="#fff9e8">Capture A + Station 07</text>
+    <text x="666" y="260" font-size="15" fill="#d6e6dd">KTX2 texture for Capture A</text>
+    <text x="666" y="340" font-size="17" font-weight="650" fill="#fff9e8">Capture B + Station 07</text>
+    <text x="666" y="366" font-size="15" fill="#d6e6dd">KTX2 texture for Capture B</text>
+    <path d="M56 425H944" stroke="#9bb4a5"/>
+    <text x="56" y="451" font-size="16" fill="#3d584c">One texture manager. Separate panorama entries.</text>
+    <text x="944" y="451" text-anchor="end" font-size="14" font-weight="650" fill="#3d584c">Illustrative station IDs</text>
+  </g>
+</svg>

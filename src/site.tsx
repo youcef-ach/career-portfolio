@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { awards, community, projects } from './data';
 import type { Project } from './data';
 import { Figure } from './figures';
-import { additionalWork, identity, profiles } from './profiles';
+import { additionalWork, appliedAiWork, identity, profiles, spatialWork } from './profiles';
 import type { Profile } from './profiles';
 
 const general = profiles[0];
@@ -85,10 +85,14 @@ function ProjectRow({ project, base }: { project: Project; base: string }) {
 
 function Work({ base, profile }: { base: string; profile: Profile }) {
   const selected = profile.projects.map(slug => projects.find(project => project.slug === slug)!);
+  const supporting = profile === general ? additionalWork : profile.slug === 'software-spatial' ? spatialWork : profile.slug === 'applied-ai' ? appliedAiWork : [];
   return <section id="work" className="container section work" aria-labelledby="work-title">
-    <SectionHeading id="work-title" label="01 / Projects" title="Selected work">{profile.slug ? profile.description : 'Four projects spanning language, vision, numerical machine learning and speech.'}</SectionHeading>
+    <SectionHeading id="work-title" label="01 / Projects" title="Selected work">{profile.slug ? profile.description : 'Agent workflows, industrial 3D software, Arabic NLP and numerical machine learning.'}</SectionHeading>
     {selected.map(project => <ProjectRow project={project} base={base} key={project.slug} />)}
-    {profile === general && <div className="additional-work"><h3>More work</h3><ul>{additionalWork.map(project => <li key={project.title}><span className="eyebrow">{project.category}</span><h4>{project.href ? <a href={project.href}>{project.title} <Arrow direction="up" /></a> : project.title}</h4><p>{project.description}</p></li>)}</ul></div>}
+    {supporting.length > 0 && <div className="additional-work"><h3>More work</h3><ul>{supporting.map(project => {
+      const href = project.projectSlug ? `${base}work/${project.projectSlug}/` : project.href;
+      return <li key={project.title}><span className="eyebrow">{project.category}</span><h4>{href ? <a href={href}>{project.title} <Arrow direction={project.href ? 'up' : 'right'} /></a> : project.title}</h4><p>{project.description}</p></li>;
+    })}</ul></div>}
   </section>;
 }
 
@@ -101,7 +105,7 @@ function Community({ base }: { base: string }) {
         <div><p className="eyebrow">{story.eyebrow}</p><h3>{story.title}</h3><p>{story.body}</p></div>
       </article>)}</div>
       <div className="awards"><h3>Competitions</h3><div className="award-grid">{awards.map(award => <article key={award.title} className="award">
-        <div className="award-meta"><span>{award.result}</span><time>{award.year}</time></div><h4>{award.title}</h4><p>{award.detail}</p>
+        <div className="award-meta"><span>{award.result}</span><time>{award.year}</time></div><h4>{award.projectSlug ? <a href={`${base}work/${award.projectSlug}/`}>{award.title}</a> : award.title}</h4><p>{award.detail}</p>
         <details className="photo-disclosure"><summary>Event photo <Arrow direction="down" /></summary><img src={`${base}${award.image}`} alt={`Photograph from ${award.title}`} width={award.width} height={award.height} loading="lazy" decoding="async" /></details>
       </article>)}</div></div>
     </div>
@@ -122,14 +126,15 @@ function Home({ base, profile }: { base: string; profile: Profile }) {
 }
 
 function CaseStudy({ project, base }: { project: Project; base: string }) {
-  const others = general.projects.map(slug => projects.find(candidate => candidate.slug === slug)!).filter(candidate => candidate !== project);
+  const others = projects.filter(candidate => candidate !== project);
   return <article className="container case-page">
     <a className="text-link back-link" href={`${base}#work`}><Arrow direction="left" /> Selected work</a>
-    <div className="case-head"><div><p className="eyebrow project-kicker"><span>{project.number}</span> {project.category}</p><h1>{project.title}</h1><p className="case-lead">{project.lead}</p></div><dl className="case-facts"><div><dt>Role</dt><dd>{project.role}</dd></div><div><dt>Project type</dt><dd>{project.status}</dd></div><div><dt>Tools</dt><dd>{project.stack.join(' · ')}</dd></div></dl></div>
+    <div className={`case-head${project.title.length > 32 ? ' case-head-long' : ''}`}><div><p className="eyebrow project-kicker"><span>{project.number}</span> {project.category}</p><h1>{project.title}</h1><p className="case-lead">{project.lead}</p></div><dl className="case-facts"><div><dt>Role</dt><dd>{project.role}</dd></div><div><dt>Project type</dt><dd>{project.status}</dd></div><div><dt>Tools</dt><dd>{project.stack.join(' · ')}</dd></div></dl></div>
     <Figure project={project} base={base} detail />
-    <div className="case-body"><aside className="case-index"><p className="eyebrow">In this case study</p><nav aria-label="Case study sections"><a href="#problem">Problem</a><a href="#decisions">Engineering choices</a><a href="#outcome">Result</a><a href="#limits">Limits</a></nav>{project.repo && <a className="text-link" href={project.repo}>Source on GitHub <Arrow direction="up" /></a>}</aside>
+    <div className="case-body"><aside className="case-index"><p className="eyebrow">In this case study</p><nav aria-label="Case study sections"><a href="#problem">Problem</a><a href="#decisions">Engineering choices</a><a href="#outcome">Result</a><a href="#limits">Limits</a></nav>{project.repo && <a className="text-link" href={project.repo}>Source on GitHub <Arrow direction="up" /></a>}{project.walkthrough && <a className="text-link" href="#walkthrough">Request a walkthrough <Arrow direction="down" /></a>}</aside>
       <div className="case-prose"><section id="problem"><p className="eyebrow">01</p><h2>The problem</h2><p>{project.problem}</p></section><section id="decisions"><p className="eyebrow">02</p><h2>Engineering choices</h2>{project.decisions.map(decision => <div key={decision.title} className="decision"><h3>{decision.title}</h3><p>{decision.body}</p></div>)}</section>
-      <section id="outcome"><p className="eyebrow">03</p><h2>Result</h2><p>{project.outcome}</p>{project.facts.length > 0 && <dl className="outcome-facts">{project.facts.map(fact => <div key={fact.label}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}</dl>}</section><section id="limits"><p className="eyebrow">04</p><h2>Limits</h2><p>{project.limits}</p></section></div>
+      <section id="outcome"><p className="eyebrow">03</p><h2>Result</h2><p>{project.outcome}</p>{project.facts.length > 0 && <dl className="outcome-facts">{project.facts.map(fact => <div key={fact.label}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}</dl>}{project.evidenceImages?.map(evidence => <figure key={evidence.path} className={`case-evidence${evidence.width < evidence.height ? ' case-evidence-portrait' : ''}`}><img src={`${base}${evidence.path}`} alt={evidence.alt} width={evidence.width} height={evidence.height} loading="lazy" decoding="async" /><figcaption>{evidence.caption}</figcaption></figure>)}</section><section id="limits"><p className="eyebrow">04</p><h2>Limits</h2><p>{project.limits}</p></section>
+      {project.walkthrough && <section id="walkthrough"><h2>See the viewer</h2><p>Get in touch to discuss a walkthrough of the viewer and the engineering behind it.</p><a className="text-link" href={`mailto:${identity.email}?subject=AzuridTwinUp%20walkthrough`}>Request a walkthrough <Arrow direction="up" /></a></section>}</div>
     </div>
     <div className="related"><h2>More case studies</h2><ul>{others.map(other => <li key={other.slug}><a href={`${base}work/${other.slug}/`}>{other.title}<Arrow /></a></li>)}</ul></div>
   </article>;

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="380" height="367" viewBox="0 0 380 367" role="img" aria-labelledby="title description">
+  <title id="title">How AzuridTwinUp separates panorama caches by capture</title>
+  <desc id="description">Two captures both use station 07. Including the capture ID keeps their panoramas in separate cache entries. Station IDs are illustrative.</desc>
+  <defs>
+    <pattern id="grid" width="16" height="16" patternUnits="userSpaceOnUse">
+      <path d="M16 0H0V16" fill="none" stroke="#cbd8ca"/>
+    </pattern>
+  </defs>
+  <rect width="380" height="367" rx="7" fill="#e5eee2"/>
+  <rect x="1" y="1" width="378" height="365" rx="6" fill="url(#grid)" opacity=".68"/>
+  <g font-family="Segoe UI, Arial, sans-serif" fill="#15352d">
+    <text x="20" y="37" font-size="11" font-weight="700" letter-spacing="1.6">AZURIDTWINUP · VIEWER ARCHITECTURE</text>
+    <text x="20" y="70" font-size="24" font-weight="700" letter-spacing="-.6">Same station ID.</text>
+    <text x="20" y="98" font-size="24" font-weight="700" letter-spacing="-.6">Different captures.</text>
+    <text x="20" y="132" font-size="11" font-weight="700" letter-spacing="1.1">PANORAMA REQUEST</text>
+    <text x="198" y="132" font-size="11" font-weight="700" letter-spacing="1.1">SCOPED TEXTURE CACHE</text>
+    <rect x="20" y="149" width="146" height="70" rx="5" fill="#fcfaf3" stroke="#adbeaf"/>
+    <rect x="20" y="233" width="146" height="70" rx="5" fill="#fcfaf3" stroke="#adbeaf"/>
+    <circle cx="38" cy="173" r="4" fill="#9b6c26"/>
+    <circle cx="38" cy="257" r="4" fill="#41796b"/>
+    <text x="51" y="178" font-size="15" font-weight="700">Capture A</text>
+    <text x="51" y="200" font-size="14" fill="#4a6057">Station 07</text>
+    <text x="51" y="262" font-size="15" font-weight="700">Capture B</text>
+    <text x="51" y="284" font-size="14" fill="#4a6057">Station 07</text>
+    <path d="M171 184h20m-6-5 6 5-6 5M171 268h20m-6-5 6 5-6 5" fill="none" stroke="#3c685a" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="198" y="149" width="162" height="70" rx="5" fill="#174940"/>
+    <rect x="198" y="233" width="162" height="70" rx="5" fill="#174940"/>
+    <text x="213" y="177" font-size="13" font-weight="700" fill="#fff9e8">Capture A + Station 07</text>
+    <text x="213" y="200" font-size="12" fill="#d6e6dd">Panorama A</text>
+    <text x="213" y="261" font-size="13" font-weight="700" fill="#fff9e8">Capture B + Station 07</text>
+    <text x="213" y="284" font-size="12" fill="#d6e6dd">Panorama B</text>
+    <path d="M20 323H360" stroke="#9bb4a5"/>
+    <text x="20" y="345" font-size="12" fill="#3d584c">Illustrative station IDs. The cache keeps them separate.</text>
+  </g>
+</svg>

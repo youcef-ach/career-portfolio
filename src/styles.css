@@ -132,11 +132,22 @@ main:focus { outline: none; }
 .figure-detail .extract-visual { grid-template-columns: auto 30px auto; align-items: center; }
 .figure-detail .extract-arrow { transform: rotate(-90deg); }
 .figure-detail .extract-input, .figure-detail .extract-output { min-width: 245px; padding: 14px 16px; }
+.project-figure.visual-azurid > picture { display: block; aspect-ratio: auto; min-height: 0; }
+.visual-azurid img { width: 100%; height: auto; }
+.operations-diagram { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-content: center; gap: clamp(8px, 1.5vw, 20px); padding: clamp(10px, 3vw, 36px); background: #e8e0cd; }
+.operations-diagram > div { min-width: 0; display: flex; flex-direction: column; gap: 6px; padding: clamp(8px, 1.6vw, 18px); border: 1px solid #c9bea4; border-radius: var(--radius); background: var(--paper); }
+.operations-diagram > div:last-child { background: var(--teal); color: #fff; border-color: var(--teal); }
+.operations-diagram small { font-size: .62rem; font-weight: 800; text-transform: uppercase; letter-spacing: .09em; }
+.operations-diagram strong { font-size: clamp(.84rem, 1.45vw, 1.2rem); line-height: 1.15; }
+.operations-diagram > div > span { font-size: clamp(.69rem, 1vw, .86rem); line-height: 1.35; }
+.figure-detail .operations-diagram { min-height: 200px; }
 .additional-work { margin-top: 49px; }
 .additional-work > h3, .awards > h3 { font-size: 1.6rem; margin-bottom: 17px; }
 .additional-work ul { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-block: 1px solid var(--rule); }
 .additional-work li { padding: 20px 15px 20px 0; }
 .additional-work li + li { border-left: 1px solid var(--rule); padding-left: 15px; }
+.additional-work li:nth-child(n+5) { border-top: 1px solid var(--rule); }
+.additional-work li:nth-child(4n+1) { border-left: none; padding-left: 0; }
 .additional-work h4 { font-size: 1.06rem; margin-block: 6px 8px; }
 .additional-work h4 a { display: inline-flex; align-items: center; gap: 3px; text-decoration: none; }
 .additional-work h4 a:hover { text-decoration: underline; }
@@ -188,6 +199,7 @@ main:focus { outline: none; }
 .case-page, .resume-page { padding-block: 28px clamp(45px, 7vw, 96px); }
 .case-head { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 310px); gap: 24px 52px; align-items: end; margin-block: 25px 32px; }
 .case-head h1, .page-intro h1 { margin-top: 10px; font-size: clamp(2.7rem, 6.3vw, 5.5rem); letter-spacing: -.065em; }
+.case-head-long h1 { font-size: clamp(2.45rem, 5.15vw, 4.65rem); }
 .case-lead, .page-intro > p:not(.eyebrow) { margin-top: 16px; max-width: 60ch; font-size: clamp(1rem, 1.7vw, 1.27rem); }
 .case-facts > div { grid-template-columns: 79px minmax(0, 1fr); }
 .case-body { display: grid; grid-template-columns: 200px minmax(0, 720px); gap: clamp(20px, 6vw, 90px); margin-top: 44px; }
@@ -202,6 +214,10 @@ main:focus { outline: none; }
 .outcome-facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(150px, 100%), 1fr)); gap: 10px; margin-top: 16px; }
 .outcome-facts > div { padding: 13px; background: var(--wash); border-radius: var(--radius); }
 .outcome-facts dd { font-size: 1.24rem; font-weight: 800; }
+.case-evidence { margin-top: 23px; }
+.case-evidence-portrait { max-width: 370px; }
+.case-evidence img { width: 100%; height: auto; border-radius: var(--radius); }
+.case-evidence figcaption { margin-top: 8px; color: var(--secondary); font-size: .8rem; }
 .related { border-top: 1px solid var(--rule); padding-top: 23px; margin-top: 20px; }
 .related h2 { margin-bottom: 13px; }
 .related ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
@@ -219,7 +235,7 @@ main:focus { outline: none; }
 @media (max-width: 820px) {
   .community-grid { gap: 22px 14px; }
   .additional-work ul { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .additional-work li:nth-child(3) { border-left: none; padding-left: 0; }
+  .additional-work li:nth-child(odd) { border-left: none; padding-left: 0; }
   .additional-work li:nth-child(n+3) { border-top: 1px solid var(--rule); }
   .project-figure > :first-child { min-height: 185px; }
 }
