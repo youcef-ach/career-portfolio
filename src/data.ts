@@ -1,0 +1,95 @@
+export interface Project {
+  slug: string;
+  number: string;
+  category: string;
+  title: string;
+  summary: string;
+  role: string;
+  stack: string[];
+  status: string;
+  repo?: string;
+  lead: string;
+  problem: string;
+  decisions: { title: string; body: string }[];
+  outcome: string;
+  limits: string;
+  facts: { label: string; value: string }[];
+}
+
+export const projects: Project[] = [
+  {
+    slug: 'arabic-structured-ie', number: '01', category: 'Applied NLP', title: 'Arabic information extraction',
+    summary: 'A local language model turns Arabic instructions into structured data that an academic GIS application can validate.',
+    role: 'NLP module author', stack: ['Python', 'Qwen 2.5', 'Ollama', 'JSON Schema'], status: 'Team academic project',
+    repo: 'https://github.com/youcef-ach/arabic-structured-llm-extractor',
+    lead: 'I built the extraction module for PlanMilt DZ, a team GIS project. My work covers the Arabic prompts, output schema, parser, and synthetic examples. Teammates built the map interface, speech recognition, and simulation backend.',
+    problem: 'Arabic instructions are natural to read but difficult to turn into predictable application inputs. A language model can suggest a structured representation, but its response might be malformed or omit fields the application needs.',
+    decisions: [
+      { title: 'Run inference locally', body: 'The Python extractor sends Arabic text and a structured prompt to Qwen through Ollama. The model suggests objects such as operation areas, lines, and forces.' },
+      { title: 'Define the interface as a schema', body: 'I used JSON Schema as the contract. The parser converts the response to JSON and validates the parsed object against the Draft 7 schema before the application consumes it.' },
+      { title: 'Make the subsystem inspectable on its own', body: 'The public repository contains the standalone extractor, schema, synthetic Arabic inputs, and tests. It can be understood without access to the team application.' },
+    ],
+    outcome: 'The extractor makes model responses easier for software to handle by rejecting invalid structures. The public source includes the schema and examples for inspecting that behavior.',
+    limits: 'Schema validation checks the shape of a response. It does not establish that the model correctly understood an instruction. The integrated GIS application is private, and the diagram shows the contract using a simplified example.',
+    facts: [{ label: 'Inference', value: 'Local' }, { label: 'Output contract', value: 'JSON Schema' }],
+  },
+  {
+    slug: 'webgpu-spatial-engine', number: '02', category: 'Spatial computing', title: 'From panoramas to 3D scenes',
+    summary: 'A browser prototype connects panoramic imagery, segmentation masks, and scanned geometry so they can be inspected in one place.',
+    role: 'Spatial pipeline development', stack: ['Python', 'FastAPI', 'Babylon.js', 'WebGPU'], status: 'Private prototype',
+    lead: 'I worked on bringing image segmentation and scan geometry into a common coordinate system. The prototype lets me inspect the scene and move between scanned viewpoints in a browser.',
+    problem: 'A 2D mask can mark a door in a panorama. Placing that door in 3D requires knowing the camera pose, choosing the correct surface, and checking for geometry in front of it.',
+    decisions: [
+      { title: 'Project the panorama into views the models can use', body: 'The pipeline creates cubemap views from a panorama and uses Mask2Former and Segment Anything to obtain candidate masks.' },
+      { title: 'Lift image regions onto surfaces', body: 'Rays from the camera intersect candidate planes. Depth checks help reject intersections behind nearer geometry, where a projected mask would otherwise land on the wrong surface.' },
+      { title: 'Inspect the result in a browser', body: 'The Babylon.js viewer provides a way to compare panoramas and spatial geometry as the camera moves between known viewpoints.' },
+    ],
+    outcome: 'The prototype connects the segmentation and geometry stages to an inspection interface. The screenshot shows the viewer during development.',
+    limits: 'The capture shows a development build with fallback lighting. It is a record of the interface and scene, with no performance benchmark or production deployment claim.',
+    facts: [{ label: 'Input', value: 'Panoramas + scans' }, { label: 'Viewer', value: 'WebGPU' }],
+  },
+  {
+    slug: 'numpy-mlp-from-scratch', number: '03', category: 'Machine learning foundations', title: 'A neural network in NumPy',
+    summary: 'A digit classifier built from matrix operations, with hand-derived gradients and a reproducible MNIST evaluation.',
+    role: 'Independent implementation', stack: ['Python', 'NumPy', 'MNIST'], status: 'Public code',
+    repo: 'https://github.com/youcef-ach/training-mlp-from-scratch-lab',
+    lead: 'I implemented a small neural network to understand the math that an automatic differentiation library normally handles. I wrote the forward pass, loss, backpropagation and mini-batch training loop in NumPy.',
+    problem: 'Calling a framework’s training API can hide which values are carried forward, how the loss gradient moves backward, and where numerical errors enter. This lab made each step explicit.',
+    decisions: [
+      { title: 'Batch the math', body: 'The model treats a batch as a matrix so the dense layers and gradients can use vectorized operations. ReLU gates the hidden units and softmax converts the output scores into probabilities.' },
+      { title: 'Work through the gradient', body: 'Combining softmax with cross-entropy reduces the gradient at the logits to predicted probabilities minus the one-hot labels. That term is propagated through the second layer and the ReLU gate.' },
+      { title: 'Keep the evaluation protocol visible', body: 'The public baseline separates training, validation, and testing. Its README documents the seeds, split, and number of test images consumed by the batch loop.' },
+    ],
+    outcome: 'The public controlled baseline reports 91.62% mean test accuracy with a standard deviation of 0.23 percentage points across five seeds, on 9,984 consumed MNIST test images.',
+    limits: 'The repository documents separate experiment protocols. The number here describes the public baseline under its stated setup.',
+    facts: [{ label: 'Mean accuracy', value: '91.62%' }, { label: 'Seeds', value: '5' }, { label: 'Test images', value: '9,984' }],
+  },
+  {
+    slug: 'stethospeech-silent-speech', number: '04', category: 'Research reproduction', title: 'StethoSpeech',
+    summary: 'A research reproduction that learns to predict speech representations from signals recorded by a contact microphone.',
+    role: 'Independent research reproduction', stack: ['PyTorch', 'HuBERT', 'Transformer'], status: 'Academic experiment',
+    lead: 'I adapted a published approach to non-audible murmur, the quiet vibrations recorded at the neck. The experiment evaluates how closely a model can predict speech features from that input.',
+    problem: 'A contact microphone records vibrations with a very different signal profile from normal speech. The experiment needed matched recordings, a consistent representation for each side, and a held-out evaluation protocol.',
+    decisions: [
+      { title: 'Work with paired recordings', body: 'I prepared matched input and target recordings and trained a Transformer on paired sequences. The completed baseline used layer 12 features from an English HuBERT model.' },
+      { title: 'Evaluate the completed run separately', body: 'The completed 19.7M-parameter baseline trained for 45 epochs. The selected checkpoint came from epoch 35. A larger paper-style adaptation was explored separately and stopped before a comparable evaluation.' },
+      { title: 'Keep the target of the metric explicit', body: 'Mean absolute error measures differences between predicted and target feature values. The experiment used a closed-speaker split, so it measures held-out utterances from speakers represented during training.' },
+    ],
+    outcome: 'The selected baseline checkpoint recorded 0.23171 mean absolute error on 1,133 held-out utterances. The paired dataset contained 11,323 matched examples.',
+    limits: 'The result concerns speech representations. End-to-end intelligibility and performance on unseen speakers still need separate evaluation. The approach was inspired by Shah et al. (ACM IMWUT, 2024).',
+    facts: [{ label: 'Feature MAE', value: '0.23171' }, { label: 'Held-out utterances', value: '1,133' }, { label: 'Parameters', value: '19.7M' }],
+  },
+];
+
+export const community = [
+  { image: 'media/evidence/ingehack_badge.webp', width: 1200, height: 960, eyebrow: 'INGENIUMS · 2023–2024', title: 'Vice president, INGENIUMS', body: 'I helped coordinate technical programs at ESI-SBA, co-organized Ingeneer events with Transformatek, and spoke to incoming students at Welcome Day.', alt: 'Youcef at Ingehack wearing his INGENIUMS vice president badge' },
+  { image: 'media/evidence/esi_showcase_demo.webp', width: 1080, height: 1080, eyebrow: 'Project demonstrations', title: 'Explaining the work', body: 'At ESI Showcase 7.0 and Ingeneer 1.0, I demonstrated projects and answered questions from students and visitors.', alt: 'Discussion around a laptop at the INGENIUMS ESI Showcase 7.0 stand' },
+  { image: 'media/evidence/ingeneer_second_ceremony.webp', width: 1200, height: 836, eyebrow: 'Event organization', title: 'Making events happen', body: 'I supported Ingeneer, Ingehack, LC Hack and Ingecode. At Ingeneer I helped present prizes to the winning teams.', alt: 'Award presentation to a winning team at the Ingeneer ceremony' },
+  { image: 'media/evidence/youth_center_stem_1.webp', width: 1200, height: 900, eyebrow: 'Community computing · Algiers', title: 'Learning with the community', body: 'I took part in computing activities at Maison de Jeunes Abderrahmane Laala. At ESI-SBA I also supported campus cultural events, including Amazigh Day and Art Manchour.', alt: 'Participants working at laptops at the youth center in Algiers' },
+];
+
+export const awards = [
+  { title: 'DevFest Hackathon', year: '2023', result: '2nd place', detail: 'Team Infinity · GDG Sidi Bel Abbès', image: 'media/evidence/dev_fest_stage.webp', width: 720, height: 721 },
+  { title: 'NCS Hackathon', year: '2024', result: '3rd place', detail: 'Team award · Numidia Computer Society', image: 'media/evidence/ncs_hack_award.webp', width: 960, height: 1200 },
+  { title: 'ForsaTIC Hackathon', year: '2024', result: 'Participant', detail: 'ESI-SBA delegation · ENSIA, Algiers', image: 'media/evidence/forsatik_team.webp', width: 900, height: 1200 },
+];

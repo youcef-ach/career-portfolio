@@ -1,0 +1,155 @@
+import type { ReactNode } from 'react';
+import { awards, community, projects } from './data';
+import type { Project } from './data';
+import { Figure } from './figures';
+import { additionalWork, identity, profiles } from './profiles';
+import type { Profile } from './profiles';
+
+const general = profiles[0];
+const profilePath = (profile: Profile) => profile.slug ? `focus/${profile.slug}/` : '';
+
+function Arrow({ direction = 'right' }: { direction?: 'right' | 'up' | 'down' | 'left' }) {
+  const paths = {
+    right: 'M3 8h10m-4-4 4 4-4 4', up: 'M4 12 12 4M5 4h7v7',
+    down: 'M8 3v10m-4-4 4 4 4-4', left: 'M13 8H3m4 4L3 8l4-4',
+  };
+  return <svg aria-hidden="true" width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d={paths[direction]} /></svg>;
+}
+
+function Download({ href, children }: { href: string; children: ReactNode }) {
+  return <a className="button button-solid" href={href} download>{children}<Arrow direction="down" /></a>;
+}
+
+function Header({ base, profile }: { base: string; profile: Profile }) {
+  const home = `${base}${profilePath(profile)}`;
+  return <header className="site-header">
+    <div className="container topbar">
+      <a className="brand" href={base} aria-label="Youcef Achouri, home"><img className="monogram" src={`${base}mark.svg`} alt="" width="38" height="38" /><span className="brand-name">Youcef Achouri</span></a>
+      <nav aria-label="Main navigation" className="nav"><a href={`${home}#work`}>Work</a><a href={`${home}#community`}>Community</a><a href={`${home}#about`}>About</a><a className="nav-cv" href={`${base}resume/`}>CV <Arrow direction="up" /></a></nav>
+    </div>
+  </header>;
+}
+
+function Footer({ base }: { base: string }) {
+  return <footer className="footer" id="contact">
+    <div className="container">
+      <div className="footer-content">
+        <div><p className="eyebrow">Get in touch</p><h2>Let’s talk.</h2><p>Available from January 2027 for a final-year internship with flexible duration. I’m open to opportunities worldwide, including Europe, the Americas, China and Japan. I prefer working on site. For France, I’m available remotely.</p></div>
+        <div className="footer-links"><a className="email-link" href={`mailto:${identity.email}`}>{identity.email} <Arrow direction="up" /></a><div className="social-links"><a href={identity.github}>GitHub <Arrow direction="up" /></a><a href={identity.linkedin}>LinkedIn <Arrow direction="up" /></a><a href={`${base}resume/`}>CVs <Arrow direction="right" /></a></div></div>
+      </div>
+      <div className="footer-end"><span>{identity.name} · Algeria</span><a href="#top">Back to top ↑</a></div>
+    </div>
+  </footer>;
+}
+
+function ProfileNav({ base, active }: { base: string; active: Profile }) {
+  return <nav className="profile-nav" aria-label="Portfolio versions">
+    <span className="profile-label">Browse by focus</span>
+    <ul>{profiles.map(profile => <li key={profile.label}><a href={`${base}${profilePath(profile)}`} aria-current={profile === active ? 'page' : undefined}>{profile.label}</a></li>)}</ul>
+  </nav>;
+}
+
+function Hero({ base, profile }: { base: string; profile: Profile }) {
+  return <section className="hero container" aria-labelledby="intro-title">
+    <div className="hero-content">
+      <p className="eyebrow hero-eyebrow"><span></span> {profile.slug ? profile.title : 'Final-year engineering student · ESI-SBA'}</p>
+      <h1 id="intro-title">Achouri<br /><em>Youcef Islem.</em></h1>
+      <p className="hero-intro">{profile.statement}</p>
+      <div className="actions"><Download href={`${base}resumes/${profile.pdf}`}>Download {profile.slug ? `${profile.label} CV` : 'CV'}</Download><a className="button button-outline" href="#work">View work <Arrow /></a></div>
+      <p className="availability"><span aria-hidden="true" /> Seeking a final-year internship · January 2027</p>
+    </div>
+    <figure className="hero-portrait">
+      <div className="portrait-image"><img src={`${base}media/evidence/welcome_day_stage.webp`} alt="Youcef speaking to students at ESI-SBA Welcome Day" width="1080" height="1080" fetchPriority="high" decoding="async" /></div>
+      <figcaption><span>ESI-SBA Welcome Day</span><span>INGENIUMS Club</span></figcaption>
+    </figure>
+  </section>;
+}
+
+function SectionHeading({ label, title, children, id }: { label: string; title: string; children?: ReactNode; id: string }) {
+  return <div className="section-head"><div><p className="eyebrow">{label}</p><h2 id={id}>{title}</h2></div>{children && <p className="section-note">{children}</p>}</div>;
+}
+
+function ProjectRow({ project, base }: { project: Project; base: string }) {
+  const url = `${base}work/${project.slug}/`;
+  return <article className="project-row">
+    <div className="project-copy">
+      <p className="eyebrow project-kicker"><span>{project.number}</span> {project.category}</p>
+      <h3>{project.title}</h3>
+      <p>{project.summary}</p>
+      <p className="project-stack">{project.stack.join(' · ')}</p>
+      <a href={url} className="text-link" aria-label={`Read case study: ${project.title}`}>Read case study <Arrow /></a>
+    </div>
+    <Figure project={project} base={base} />
+  </article>;
+}
+
+function Work({ base, profile }: { base: string; profile: Profile }) {
+  const selected = profile.projects.map(slug => projects.find(project => project.slug === slug)!);
+  return <section id="work" className="container section work" aria-labelledby="work-title">
+    <SectionHeading id="work-title" label="01 / Projects" title="Selected work">{profile.slug ? profile.description : 'Four projects spanning language, vision, numerical machine learning and speech.'}</SectionHeading>
+    {selected.map(project => <ProjectRow project={project} base={base} key={project.slug} />)}
+    {profile === general && <div className="additional-work"><h3>More work</h3><ul>{additionalWork.map(project => <li key={project.title}><span className="eyebrow">{project.category}</span><h4>{project.href ? <a href={project.href}>{project.title} <Arrow direction="up" /></a> : project.title}</h4><p>{project.description}</p></li>)}</ul></div>}
+  </section>;
+}
+
+function Community({ base }: { base: string }) {
+  return <section id="community" className="section community" aria-labelledby="community-title">
+    <div className="container">
+      <SectionHeading id="community-title" label="02 / Community" title="Beyond the lab">I’ve helped run student events, explained projects to visitors and competed alongside classmates.</SectionHeading>
+      <div className="community-grid">{community.map((story, i) => <article key={story.title} className={`community-story community-story-${i + 1}`}>
+        <figure><img src={`${base}${story.image}`} width={story.width} height={story.height} loading="lazy" decoding="async" alt={story.alt} /></figure>
+        <div><p className="eyebrow">{story.eyebrow}</p><h3>{story.title}</h3><p>{story.body}</p></div>
+      </article>)}</div>
+      <div className="awards"><h3>Competitions</h3><div className="award-grid">{awards.map(award => <article key={award.title} className="award">
+        <div className="award-meta"><span>{award.result}</span><time>{award.year}</time></div><h4>{award.title}</h4><p>{award.detail}</p>
+        <details className="photo-disclosure"><summary>Event photo <Arrow direction="down" /></summary><img src={`${base}${award.image}`} alt={`Photograph from ${award.title}`} width={award.width} height={award.height} loading="lazy" decoding="async" /></details>
+      </article>)}</div></div>
+    </div>
+  </section>;
+}
+
+function About({ base }: { base: string }) {
+  return <section id="about" className="container section about" aria-labelledby="about-title">
+    <SectionHeading id="about-title" label="03 / Background" title="About me" />
+    <div className="about-grid"><div className="about-copy"><h3>Engineering, from the model to the interface.</h3><p>I’m in my fifth year at ESI-SBA, specializing in {identity.specialty}. I enjoy problems that cross layers of a system, such as getting a segmentation mask to line up with a scan or turning an Arabic instruction into data a program can validate.</p><p>My time with INGENIUMS gave me a second way to practice engineering. Presenting demos and coordinating events taught me to explain a technical idea clearly and make it easier for other people to contribute.</p><a className="text-link" href={`${base}resume/`}>View CVs <Arrow /></a></div>
+      <dl className="about-facts"><div><dt>Education</dt><dd>{identity.school}</dd><dd>Computer science engineering degree in progress</dd></div><div><dt>Based in</dt><dd>Algeria</dd></div><div><dt>Languages</dt><dd>English and French · Fluent</dd></div><div><dt>Tools I use</dt><dd>Python, PyTorch, NumPy, TypeScript, React, FastAPI and Babylon.js</dd></div></dl>
+    </div>
+  </section>;
+}
+
+function Home({ base, profile }: { base: string; profile: Profile }) {
+  return <><Hero base={base} profile={profile} /><div className="container"><ProfileNav base={base} active={profile} /></div><Work base={base} profile={profile} /><Community base={base} /><About base={base} /></>;
+}
+
+function CaseStudy({ project, base }: { project: Project; base: string }) {
+  const others = general.projects.map(slug => projects.find(candidate => candidate.slug === slug)!).filter(candidate => candidate !== project);
+  return <article className="container case-page">
+    <a className="text-link back-link" href={`${base}#work`}><Arrow direction="left" /> Selected work</a>
+    <div className="case-head"><div><p className="eyebrow project-kicker"><span>{project.number}</span> {project.category}</p><h1>{project.title}</h1><p className="case-lead">{project.lead}</p></div><dl className="case-facts"><div><dt>Role</dt><dd>{project.role}</dd></div><div><dt>Project type</dt><dd>{project.status}</dd></div><div><dt>Tools</dt><dd>{project.stack.join(' · ')}</dd></div></dl></div>
+    <Figure project={project} base={base} detail />
+    <div className="case-body"><aside className="case-index"><p className="eyebrow">In this case study</p><nav aria-label="Case study sections"><a href="#problem">Problem</a><a href="#decisions">Engineering choices</a><a href="#outcome">Result</a><a href="#limits">Limits</a></nav>{project.repo && <a className="text-link" href={project.repo}>Source on GitHub <Arrow direction="up" /></a>}</aside>
+      <div className="case-prose"><section id="problem"><p className="eyebrow">01</p><h2>The problem</h2><p>{project.problem}</p></section><section id="decisions"><p className="eyebrow">02</p><h2>Engineering choices</h2>{project.decisions.map(decision => <div key={decision.title} className="decision"><h3>{decision.title}</h3><p>{decision.body}</p></div>)}</section>
+      <section id="outcome"><p className="eyebrow">03</p><h2>Result</h2><p>{project.outcome}</p>{project.facts.length > 0 && <dl className="outcome-facts">{project.facts.map(fact => <div key={fact.label}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}</dl>}</section><section id="limits"><p className="eyebrow">04</p><h2>Limits</h2><p>{project.limits}</p></section></div>
+    </div>
+    <div className="related"><h2>More case studies</h2><ul>{others.map(other => <li key={other.slug}><a href={`${base}work/${other.slug}/`}>{other.title}<Arrow /></a></li>)}</ul></div>
+  </article>;
+}
+
+function Resume({ base }: { base: string }) {
+  return <section className="container resume-page">
+    <a className="text-link back-link" href={base}><Arrow direction="left" /> Portfolio</a>
+    <div className="page-intro"><p className="eyebrow">Curriculum vitae</p><h1>CVs for each focus.</h1><p>The general CV covers my engineering work, education and leadership. The other versions highlight projects relevant to specific internship roles.</p></div>
+    <div className="resume-list">{profiles.map(profile => <article key={profile.label}><div><p className="eyebrow">{profile.label}</p><h2>{profile.slug ? profile.title : 'General engineering CV'}</h2><p>{profile.description}</p></div><div className="actions"><Download href={`${base}resumes/${profile.pdf}`}>Download PDF</Download><a className="text-link" href={`${base}${profilePath(profile)}`}>View portfolio <Arrow /></a></div></article>)}</div>
+  </section>;
+}
+
+export type Page = { kind: 'home'; profile: Profile } | { kind: 'case'; project: Project } | { kind: 'resume' } | { kind: 'missing' };
+
+export function Site({ page, base }: { page: Page; base: string }) {
+  return <div id="top"><a className="skip-link" href="#main">Skip to content</a><Header base={base} profile={page.kind === 'home' ? page.profile : general} /><main id="main" tabIndex={-1}>
+    {page.kind === 'home' && <Home base={base} profile={page.profile} />}
+    {page.kind === 'case' && <CaseStudy base={base} project={page.project} />}
+    {page.kind === 'resume' && <Resume base={base} />}
+    {page.kind === 'missing' && <section className="container page-intro missing"><p className="eyebrow">404</p><h1>Page not found.</h1><a className="button button-solid" href={base}>Back to portfolio <Arrow /></a></section>}
+  </main><Footer base={base} /></div>;
+}
