@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "sweep_count": 2,
+  "incomplete_sweeps": [],
+  "sweeps": [
+    {
+      "sweep_uuid": "demo-entry",
+      "index": 1,
+      "faces": {
+        "px": "demo-entry/px.jpg",
+        "nx": "demo-entry/nx.jpg",
+        "py": "demo-entry/py.jpg",
+        "ny": "demo-entry/ny.jpg",
+        "pz": "demo-entry/pz.jpg",
+        "nz": "demo-entry/nz.jpg"
+      }
+    },
+    {
+      "sweep_uuid": "demo-window",
+      "index": 2,
+      "faces": {
+        "px": "demo-window/px.jpg",
+        "nx": "demo-window/nx.jpg",
+        "py": "demo-window/py.jpg",
+        "ny": "demo-window/ny.jpg",
+        "pz": "demo-window/pz.jpg",
+        "nz": "demo-window/nz.jpg"
+      }
+    }
+  ]
+}

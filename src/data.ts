@@ -8,6 +8,7 @@ export interface Project {
   stack: string[];
   status: string;
   repo?: string;
+  demo?: { path: string; note: string };
   walkthrough?: boolean;
   walkthroughMedia?: { path: string; poster: string; transcript: string[] };
   evidenceImages?: { path: string; alt: string; caption: string; width: number; height: number }[];
@@ -86,19 +87,24 @@ export const projects: Project[] = [
     facts: [{ label: 'Inference', value: 'Local' }, { label: 'Output contract', value: 'JSON Schema' }],
   },
   {
-    slug: 'webgpu-spatial-engine', number: '02', category: 'Spatial computing', title: 'From panoramas to 3D scenes',
-    summary: 'A browser prototype connects panoramic imagery, segmentation masks, and scanned geometry so they can be inspected in one place.',
+    slug: 'webgpu-spatial-engine', number: '02', category: 'Spatial computing', title: 'Virtual staging on 3D scans',
+    summary: 'A Babylon.js prototype for placing furniture in panoramic scans, with an offline vision pipeline that connects image regions to 3D geometry.',
     role: 'Spatial pipeline development', stack: ['Python', 'FastAPI', 'Babylon.js', 'WebGPU'], status: 'Private prototype',
-    lead: 'I worked on bringing image segmentation and scan geometry into a common coordinate system. The prototype lets me inspect the scene and move between scanned viewpoints in a browser.',
-    problem: 'A 2D mask can mark a door in a panorama. Placing that door in 3D requires knowing the camera pose, choosing the correct surface, and checking for geometry in front of it.',
+    demo: { path: 'demos/virtual-staging/', note: 'Synthetic room with precomputed model results' },
+    lead: 'Place new furniture in a scanned room while preserving the original photographs. My work focused on aligning computer-vision output with scan geometry so the viewer can place new objects in the room.',
+    problem: 'A photograph can show where a doorway appears in the image. Placing an object near it requires knowing where the camera stood, how far away the wall is, and what should be visible in front of the object.',
     decisions: [
-      { title: 'Project the panorama into views the models can use', body: 'The pipeline creates cubemap views from a panorama and uses Mask2Former and Segment Anything to obtain candidate masks.' },
-      { title: 'Lift image regions onto surfaces', body: 'Rays from the camera intersect candidate planes. Depth checks help reject intersections behind nearer geometry, where a projected mask would otherwise land on the wrong surface.' },
-      { title: 'Inspect the result in a browser', body: 'The Babylon.js viewer provides a way to compare panoramas and spatial geometry as the camera moves between known viewpoints.' },
+      { title: 'Keep one metric coordinate frame', body: 'At ingestion, the pipeline converts the E57 scan and camera poses from Z-up to Y-up while preserving the scan origin. The geometry, camera poses and furniture placements share that frame.' },
+      { title: 'Label regions, then refine selected boundaries', body: 'Mask2Former Swin-T, trained on ADE20K, labels the perspective faces of the panorama. The pipeline groups these labels into seven classes and uses boxes around candidate windows, doors and furniture to prompt SAM ViT-B. An overlap check gates whether the pipeline accepts each refined mask.' },
+      { title: 'Check that openings are visible in 3D', body: 'For doors and windows, the pipeline casts rays from the camera onto candidate wall planes. Depth baked from the simplified scan mesh helps reject intersections blocked by nearer geometry.' },
+      { title: 'Render the photograph and furniture separately', body: 'Babylon.js combines the unchanged photographic panorama with a depth-writing mesh and separately lit glTF furniture. The mesh gives virtual objects something to sit on and lets nearer surfaces hide them.' },
     ],
-    outcome: 'The prototype connects the segmentation and geometry stages to an inspection interface. The screenshot shows the viewer during development.',
-    limits: 'The capture shows a development build with fallback lighting. It is a record of the interface and scene, with no performance benchmark or production deployment claim.',
-    facts: [{ label: 'Input', value: 'Panoramas + scans' }, { label: 'Viewer', value: 'WebGPU' }],
+    outcome: 'The demo renders an original synthetic room with prepared geometry. Switch between two viewpoints, show or hide the staged chair, or inspect the room in 3D. The model-output view compares the same room image before segmentation, after Mask2Former, and after the SAM refinement pass.',
+    limits: 'The demo uses one synthetic room and precomputed inference. The comparison documents this example. On real scans, approximate geometry and reflections from glass and mirrors can affect occlusion and mask quality.',
+    facts: [{ label: 'Pipeline input', value: 'E57 scan + panoramas' }, { label: 'Models', value: 'Mask2Former + SAM' }, { label: 'Viewer', value: 'Babylon.js' }],
+    evidenceImages: [
+      { path: 'media/virtual-staging/model-evidence.webp', alt: 'Three panels show the same synthetic room face, the Mask2Former class overlay, and the class overlay after the SAM refinement pass.', caption: 'Same synthetic room face across the original input, Mask2Former labels, and the SAM refinement pass.', width: 1440, height: 680 },
+    ],
   },
   {
     slug: 'numpy-mlp-from-scratch', number: '03', category: 'Machine learning foundations', title: 'A neural network in NumPy',

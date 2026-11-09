@@ -1,4 +1,4 @@
-import { copyFile, mkdir, readFile, readdir, unlink, writeFile } from 'node:fs/promises';
+import { copyFile, lstat, mkdir, readFile, readdir, realpath, rm, unlink, writeFile } from 'node:fs/promises';
 import { resolve, dirname, join } from 'node:path';
 import { createHash } from 'node:crypto';
 import { renderToStaticMarkup } from 'react-dom/server';
@@ -26,6 +26,39 @@ async function copyOutput(source: string, path: string) {
   await copyFile(source, destination);
 }
 
+async function copyDemoOutput(path: string) {
+  if (!/^demos\/[a-z0-9-]+\/$/.test(path)) throw new Error(`Invalid demo path ${path}`);
+  const source = resolve('public', path);
+  const manifest = JSON.parse(await readFile(join(source, 'demo-files.json'), 'utf8')) as { files?: unknown } | null;
+  const files = manifest?.files;
+  const asset = /^(?:[a-zA-Z0-9_-]+\/)*[a-zA-Z0-9_-][a-zA-Z0-9_.-]*\.(?:css|env|glb|jpe?g|js|json|ktx2|png|svg|wasm|webp|woff2)$/;
+  if (!Array.isArray(files) || !files.includes('index.html') ||
+      !files.every(file => typeof file === 'string' && (file === 'index.html' || asset.test(file))) ||
+      new Set(files.map(file => file.toLowerCase())).size !== files.length || files.includes('demo-files.json')) {
+    throw new Error(`Invalid file list in ${path}demo-files.json`);
+  }
+
+  await Promise.all(files.map(async file => {
+    const location = join(source, file);
+    if (!(await lstat(location)).isFile() || await realpath(location) !== location) {
+      throw new Error(`Expected a regular demo file at ${path}${file}`);
+    }
+  }));
+
+  const destination = resolve(dist, path);
+  await mkdir(dirname(destination), { recursive: true });
+  const destinationParent = await realpath(dirname(destination));
+  const existingDestination = await realpath(destination).catch(error => {
+    if (error.code !== 'ENOENT') throw error;
+    return destination;
+  });
+  if (destinationParent !== join(dist, 'demos') || existingDestination !== destination) {
+    throw new Error(`Refusing to replace a nonlocal demo directory at ${destination}`);
+  }
+  await rm(destination, { recursive: true, force: true });
+  await Promise.all(files.map(file => copyOutput(join(source, file), `${path}${file}`)));
+}
+
 const escapeHtml = (text: string) => text.replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]!));
 
 type Route = { path: string; page: Page; title: string; description: string };
@@ -42,7 +75,7 @@ async function build() {
   const cssName = `assets/site-${createHash('sha256').update(css).digest('hex').slice(0, 10)}.css`;
   await writeOutput(cssName, css);
   const publicAssets = new Set([
-    'mark.svg', 'media/spatial-prototype.webp', 'media/evidence/welcome_day_stage.webp',
+    'mark.svg', 'media/virtual-staging/viewer.webp', 'media/evidence/welcome_day_stage.webp',
     'media/azurid-capture-isolation.svg', 'media/azurid-capture-isolation-mobile.svg',
     ...community.map(story => story.image),
     ...awards.map(award => award.image),
@@ -57,6 +90,9 @@ async function build() {
     copyOutput('node_modules/@fontsource-variable/newsreader/LICENSE', 'fonts/LICENSE-Newsreader.txt'),
     ...Array.from(publicAssets, path => copyOutput(`public/${path}`, path)),
   ]);
+  for (const project of projects) {
+    if (project.demo) await copyDemoOutput(project.demo.path);
+  }
 
   await Promise.all(routes.map(async route => {
     const title = escapeHtml(`${identity.name} · ${route.title}`);

@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "coordinate_frame": "runtime_yup",
+  "conversion": "Synthetic Blender Z-up to right-handed runtime Y-up in meters.",
+  "sweep_count": 2,
+  "sweeps": [
+    {
+      "sweep_uuid": "demo-entry",
+      "index": 1,
+      "pose_rt": [
+        [
+          1,
+          0,
+          0,
+          -0.2
+        ],
+        [
+          0,
+          1,
+          0,
+          1.55
+        ],
+        [
+          0,
+          0,
+          1,
+          -2.0
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    },
+    {
+      "sweep_uuid": "demo-window",
+      "index": 2,
+      "pose_rt": [
+        [
+          1,
+          0,
+          0,
+          1.12
+        ],
+        [
+          0,
+          1,
+          0,
+          1.55
+        ],
+        [
+          0,
+          0,
+          1,
+          -0.56
+        ],
+        [
+          0,
+          0,
+          0,
+          1
+        ]
+      ]
+    }
+  ]
+}

@@ -1,0 +1,225 @@
+{
+  "schemaVersion": 1,
+  "dataOrigin": "Original synthetic room. A single upright face rendered for this demo.",
+  "inputDimensions": [
+    896,
+    896
+  ],
+  "width": 640,
+  "height": 640,
+  "repositoryCommit": "ea6757199c7a05b53a0fa04aa87b9748cba9416d",
+  "pipelineSourceSha256": "d97538e2b753f271bf0133e85ea34c5f53148378100e7b44cb1650235c9a2d41",
+  "inputSha256": "fc40cf1799202ad05fc0c70623fdef36d5809dc0f0066ff648aca084aa620c56",
+  "models": {
+    "mask2former": {
+      "id": "facebook/mask2former-swin-tiny-ade-semantic",
+      "revision": "c8cf1b5e823aee214d937d0d001c1850ba44ef6a",
+      "fp16": false
+    },
+    "sam": {
+      "id": "SAM ViT-B",
+      "checkpoint": "sam_vit_b_01ec64.pth",
+      "sha256": "ec2df62732614e57411cdcf32a23ffdf28910380d03139ee0f4fcbe91eb8c912"
+    }
+  },
+  "runtime": {
+    "torch": "2.10.0+cpu",
+    "transformers": "4.57.3",
+    "device": "cpu"
+  },
+  "classes": [
+    {
+      "name": "other",
+      "rgb": [
+        128,
+        128,
+        128
+      ],
+      "pixels": 1930
+    },
+    {
+      "name": "floor",
+      "rgb": [
+        80,
+        200,
+        80
+      ],
+      "pixels": 121776
+    },
+    {
+      "name": "wall",
+      "rgb": [
+        70,
+        110,
+        230
+      ],
+      "pixels": 76306
+    },
+    {
+      "name": "ceiling",
+      "rgb": [
+        90,
+        220,
+        220
+      ],
+      "pixels": 136250
+    },
+    {
+      "name": "window",
+      "rgb": [
+        250,
+        220,
+        60
+      ],
+      "pixels": 23250
+    },
+    {
+      "name": "door",
+      "rgb": [
+        245,
+        140,
+        40
+      ],
+      "pixels": 10280
+    },
+    {
+      "name": "furniture",
+      "rgb": [
+        220,
+        80,
+        200
+      ],
+      "pixels": 39808
+    }
+  ],
+  "stats": {
+    "prompts": 6,
+    "accepted": 6,
+    "changedPixels": 1115,
+    "totalPixels": 409600,
+    "minPromptAreaPixels": 300,
+    "minimumIoU": 0.3
+  },
+  "ade20kLabelPixels": {
+    "ceiling": 136250,
+    "rug": 91295,
+    "wall": 76306,
+    "floor": 30481,
+    "sofa": 25511,
+    "windowpane": 23250,
+    "door": 10280,
+    "lamp": 5625,
+    "coffee table": 5533,
+    "cushion": 1619,
+    "cabinet": 944,
+    "pot": 740,
+    "book": 633,
+    "plant": 417,
+    "armchair": 303,
+    "chair": 273,
+    "plate": 140
+  },
+  "proposals": [
+    {
+      "class": "window",
+      "sourcePixels": 23250,
+      "proposalPixels": 20262,
+      "boxXYXY": [
+        243,
+        248,
+        457,
+        372
+      ],
+      "iou": 0.8702,
+      "accepted": true
+    },
+    {
+      "class": "door",
+      "sourcePixels": 10280,
+      "proposalPixels": 8761,
+      "boxXYXY": [
+        123,
+        267,
+        210,
+        418
+      ],
+      "iou": 0.8197,
+      "accepted": true
+    },
+    {
+      "class": "furniture",
+      "sourcePixels": 5602,
+      "proposalPixels": 5521,
+      "boxXYXY": [
+        200,
+        179,
+        305,
+        253
+      ],
+      "iou": 0.9545,
+      "accepted": true
+    },
+    {
+      "class": "furniture",
+      "sourcePixels": 27130,
+      "proposalPixels": 25656,
+      "boxXYXY": [
+        339,
+        351,
+        600,
+        468
+      ],
+      "iou": 0.929,
+      "accepted": true
+    },
+    {
+      "class": "furniture",
+      "sourcePixels": 1247,
+      "proposalPixels": 1132,
+      "boxXYXY": [
+        0,
+        408,
+        16,
+        505
+      ],
+      "iou": 0.8956,
+      "accepted": true
+    },
+    {
+      "class": "furniture",
+      "sourcePixels": 5533,
+      "proposalPixels": 5622,
+      "boxXYXY": [
+        159,
+        428,
+        305,
+        505
+      ],
+      "iou": 0.8236,
+      "accepted": true
+    }
+  ],
+  "assets": {
+    "input": {
+      "path": "input.webp",
+      "alt": "Original synthetic room view used as model input.",
+      "sha256": "4afda254ec02aeb737ceae7313844ab1311d6a4c50c49a4c3e435f8af9b25cd0"
+    },
+    "mask2former": {
+      "path": "mask2former.webp",
+      "alt": "The same room with seven-class colors derived from Mask2Former semantic labels.",
+      "sha256": "f30e2e57f4e636cac2d92907345f17768afc1a6e00e78b443d39112e401bc28c"
+    },
+    "sam": {
+      "path": "sam.webp",
+      "alt": "The same color overlay after applying the accepted Segment Anything boundary proposals.",
+      "sha256": "11ed078a25334c83f6722eb7bfa057d3d0d583bdb73640f3ace2389f86a778e8"
+    },
+    "difference": {
+      "path": "difference.webp",
+      "alt": "Bright yellow marks pixels whose class changed after Segment Anything refinement.",
+      "sha256": "0166518da55a24309d1a693e84e4db33a3aefb07203a6a93d4cd28308a5234db"
+    }
+  },
+  "limits": "One synthetic face. The overlap gate compares two model outputs. No ground truth or model-quality benchmark was run."
+}

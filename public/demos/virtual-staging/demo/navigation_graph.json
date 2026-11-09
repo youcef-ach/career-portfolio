@@ -1,0 +1,39 @@
+{
+  "schema_version": 1,
+  "coordinate_frame": "runtime_yup",
+  "node_count": 2,
+  "edge_count": 1,
+  "portal_count": 0,
+  "connected_components": 1,
+  "nodes": [
+    {
+      "uuid": "demo-entry",
+      "index": 1,
+      "position": [
+        -0.2,
+        1.55,
+        -2.0
+      ],
+      "room": "Synthetic living room"
+    },
+    {
+      "uuid": "demo-window",
+      "index": 2,
+      "position": [
+        1.12,
+        1.55,
+        -0.56
+      ],
+      "room": "Synthetic living room"
+    }
+  ],
+  "edges": [
+    {
+      "from": "demo-entry",
+      "to": "demo-window",
+      "distance_m": 1.9534584715319647,
+      "portal": false,
+      "room": "Synthetic living room"
+    }
+  ]
+}

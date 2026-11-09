@@ -76,8 +76,8 @@ const panoriha: SupportingProject = {
 
 export const additionalWork: SupportingProject[] = [
   {
-    title: 'From panoramas to 3D scenes',
-    description: 'A Babylon.js prototype for projecting segmentation masks onto scanned geometry.',
+    title: 'Virtual staging on 3D scans',
+    description: 'A Babylon.js furniture-staging demo with a comparison of Mask2Former and SAM outputs.',
     projectSlug: 'webgpu-spatial-engine',
     category: 'Spatial vision',
   },

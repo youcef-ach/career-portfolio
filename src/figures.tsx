@@ -44,8 +44,8 @@ export function Figure({ project, base, detail = false }: { project: Project; ba
 
   if (project.slug === 'webgpu-spatial-engine') {
     return <figure className={`project-figure visual-spatial${detail ? ' figure-detail' : ''}`}>
-      <img src={`${base}media/spatial-prototype.webp`} width="1920" height="869" loading="lazy" decoding="async" alt="WebGPU prototype showing a scanned interior and a list of panorama viewpoints" />
-      <figcaption><span>Spatial viewer</span><span>Prototype capture</span></figcaption>
+      <img src={`${base}media/virtual-staging/viewer.webp`} width="1440" height="900" loading={detail ? 'eager' : 'lazy'} decoding="async" alt="The Babylon.js demo showing a synthetic interior and the virtual staging controls" />
+      <figcaption><span>Virtual staging viewer</span><span>Synthetic demo</span></figcaption>
     </figure>;
   }
 
