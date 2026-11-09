@@ -47,6 +47,7 @@ async function build() {
     ...community.map(story => story.image),
     ...awards.map(award => award.image),
     ...projects.flatMap(project => project.evidenceImages?.map(evidence => evidence.path) ?? []),
+    ...projects.flatMap(project => project.walkthroughMedia ? [project.walkthroughMedia.path, project.walkthroughMedia.poster] : []),
     ...profiles.map(profile => `resumes/${profile.pdf}`),
   ]);
   await Promise.all([

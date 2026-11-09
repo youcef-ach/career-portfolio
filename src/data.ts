@@ -9,6 +9,7 @@ export interface Project {
   status: string;
   repo?: string;
   walkthrough?: boolean;
+  walkthroughMedia?: { path: string; poster: string; transcript: string[] };
   evidenceImages?: { path: string; alt: string; caption: string; width: number; height: number }[];
   lead: string;
   problem: string;
@@ -41,19 +42,32 @@ export const projects: Project[] = [
   },
   {
     slug: 'azuridtwinup', number: '06', category: 'Industrial spatial software', title: 'AzuridTwinUp',
-    summary: 'An industrial browser viewer for navigating 360° inspection captures and inspecting geometry. A viewer hardening checkpoint focused on texture isolation, recovery and trustworthy measurements.',
-    role: 'Product and viewer engineering', stack: ['React', 'Three.js', 'TypeScript', 'KTX2'], status: 'Private product · Viewer B checkpoint',
+    summary: 'A browser viewer for moving between 360° inspection stations and examining their 3D geometry. Viewer B improves how the application handles shared station identifiers, interrupted navigation, and measurement frames.',
+    role: 'Product and viewer engineering', stack: ['React', 'Three.js', 'TypeScript', 'KTX2'], status: 'Private product · Protected Viewer B preview',
     walkthrough: true,
-    lead: 'I work on AzuridTwinUp, a browser-based viewer for navigating industrial inspection stations and examining spatial geometry. This case study describes the Viewer B hardening checkpoint, developed and validated in a separate workspace.',
+    walkthroughMedia: {
+      path: 'media/azurid-walkthrough.mp4',
+      poster: 'media/azurid-walkthrough.webp',
+      transcript: [
+        '0:00–0:07 · Industrial 360° inspection in the browser. The walkthrough uses Viewer B with an original synthetic scene.',
+        '0:07–0:22 · Choose a station and drag to inspect the scene. Viewer B moves between the original synthetic panoramas.',
+        '0:22–0:33 · Two bays reuse scan_0. The panorama lookup is scoped to the capture. Separate shared-cache tests exercise both request orders.',
+        '0:33–0:42 · Switch from Synthetic Bay A to Synthetic Bay B and open Station 1. The selected capture determines which panorama loads.',
+        '0:42–0:52 · A deliberate missing panorama interrupts a station request. A working station can still open afterward.',
+        '0:52–1:02 · Measurement is unavailable for an unqualified frame. A metric coordinate frame and supported up axis are required.',
+        '1:02–1:13 · The sealed R5 candidate recorded 104 passing behavioral tests. Read the case study or request a walkthrough.',
+      ],
+    },
+    lead: 'I work on AzuridTwinUp, a browser-based viewer for navigating industrial inspection stations. Viewer B pairs each station’s camera pose and panorama with the corresponding 3D model. The hardening work began in a separate workspace. The verified build now runs as a protected preview on the product’s server.',
     problem: 'When two captures use the same station identifier, a texture lookup needs to know which capture owns it. Separately, switching views or recovering from a failed upload must release resources and allow the next navigation attempt. Measurements need an explicit coordinate frame and units.',
     decisions: [
       { title: 'Scope resources to their owners', body: 'The candidate scopes whole-KTX2 lookups by capture ID and keeps GPU resource leases distinct across product revisions. Tests cover shared revisions, independent revisions and both teardown orders.' },
       { title: 'Recover from interrupted navigation', body: 'The viewer resets the transition when landing confirmation fails. Recovery paths release pending resource leases so the user can select the next station.' },
       { title: 'Validate inputs at the viewer boundary', body: 'The candidate rejects malformed tile descriptors, normalizes incoming rotations, and reports measurements only when the coordinate frame declares a supported up axis and metre units.' },
     ],
-    outcome: 'The isolated R5 candidate recorded 104 passing behavioral tests, a successful type check and build, and a delivery archive verified against its file manifest.',
-    limits: 'These checks describe the isolated Viewer B candidate. The hosted revision and production performance need separate verification. The figure uses fictional capture identifiers to explain the cache boundary.',
-    facts: [{ label: 'Behavioral tests passed', value: '104' }, { label: 'Verification scope', value: 'Local R5 build' }],
+    outcome: 'The isolated R5 checkpoint passed 104 behavioral tests. The integrated build passed 18 targeted tests and browser checks on two protected captures, with two stations rendered in each. HTTPS checks confirmed that the hosted preview serves the verified R5 bundle and requires authentication for the capture routes and assets.',
+    limits: 'The hosted preview disables measurement on captures whose coordinate frames still need qualification. The verification covered navigation and access controls. Performance on target devices and measurement accuracy remain open.',
+    facts: [{ label: 'R5 behavioral tests passed', value: '104' }, { label: 'Protected captures tested', value: '2' }],
   },
   {
     slug: 'arabic-structured-ie', number: '01', category: 'Applied NLP', title: 'Arabic information extraction',

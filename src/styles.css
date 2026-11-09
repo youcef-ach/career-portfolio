@@ -218,6 +218,11 @@ main:focus { outline: none; }
 .case-evidence-portrait { max-width: 370px; }
 .case-evidence img { width: 100%; height: auto; border-radius: var(--radius); }
 .case-evidence figcaption { margin-top: 8px; color: var(--secondary); font-size: .8rem; }
+.case-walkthrough { display: block; width: 100%; aspect-ratio: 16 / 9; margin-top: 16px; border-radius: var(--radius); background: #122221; }
+.walkthrough-transcript { margin-block: 12px; }
+.walkthrough-transcript summary { cursor: pointer; font-weight: 650; }
+.walkthrough-transcript ol { padding-inline-start: 24px; }
+.walkthrough-transcript li + li { margin-top: 7px; }
 .related { border-top: 1px solid var(--rule); padding-top: 23px; margin-top: 20px; }
 .related h2 { margin-bottom: 13px; }
 .related ul { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 11px; }
