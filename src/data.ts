@@ -314,17 +314,17 @@ export const projects: Project[] = [
     "category": "Applied NLP & LLMs",
     "title": "Arabic structured information extraction",
     "summary": "A local Qwen 2.5 7B module that converts Arabic descriptions into nested JSON for an academic GIS application. Syntax and Draft 7 schema validation reject malformed outputs; semantic extraction accuracy remains to be evaluated.",
-    "role": "NLP extraction engine architect — prompt engineering, JSON schema, validation guard, tests",
+    "role": "Project team lead and Arabic extraction-module developer",
     "stack": [
       "Qwen 2.5 7B",
       "Ollama",
       "Python",
       "JSON Schema Draft 7"
     ],
-    "status": "Academic GIS module · 2026 · Public extractor",
+    "status": "Institutional AI/GIS placement · February–May 2026 · Public extractor",
     "repo": "https://github.com/youcef-ach/arabic-structured-llm-extractor",
-    "lead": "I designed and implemented the Arabic extraction module for PlanMilt DZ, an academic GIS project. My contribution covers the prompt, recursive JSON schema, parsing and validation guards, and eight public tests. The standalone extractor can be reviewed independently of the private team application.",
-    "context": "PlanMilt DZ is an academic GIS application for processing Arabic tactical descriptions. The extraction module bridges natural-language Arabic input and the structured data the application needs. Qwen 2.5 7B was selected for its strong Arabic language support and its ability to run locally via Ollama, avoiding external API dependencies and keeping inference private. The JSON Schema defines three top-level entity types (areas_of_operation, tactical_lines, forces) with a recursive military_unit definition supporting six hierarchical levels (battalion through heavy_weapon) and four affiliation classes (friendly, enemy, neutral, unknown). Each entity carries coordinate arrays and nested sub-units, giving the schema enough depth to represent full organizational hierarchies from a single text extraction.",
+    "lead": "I led and supervised the team developing PlanMilt DZ during an institutional AI/GIS placement from February to May 2026. Alongside team coordination, I designed and implemented the Arabic extraction module: the prompt, recursive JSON schema, parsing and validation guards, and eight public tests. The standalone extractor can be reviewed independently of the private team application.",
+    "context": "PlanMilt DZ was developed in collaboration with an institutional partner. We made several on-site visits, and the partner supplied GPU resources for the team’s model training and fine-tuning work, along with data samples adapted to its requirements. My individual implementation was the Arabic extraction module; the application was a team effort. The extraction module bridges natural-language Arabic input and the structured data the application needs. Qwen 2.5 7B was selected for its strong Arabic language support and its ability to run locally via Ollama, avoiding external API dependencies and keeping inference private. The JSON Schema defines three top-level entity types (areas_of_operation, tactical_lines, forces) with a recursive military_unit definition supporting six hierarchical levels (battalion through heavy_weapon) and four affiliation classes (friendly, enemy, neutral, unknown). Each entity carries coordinate arrays and nested sub-units, giving the schema enough depth to represent full organizational hierarchies from a single text extraction.",
     "problem": "Arabic instructions are natural to read but difficult to turn into predictable application inputs. A language model can suggest a structured representation, but its response might be malformed JSON, omit required fields, or include unexpected types. The application needs a reliable contract that rejects invalid structures before they reach the business logic.",
     "decisions": [
       {
