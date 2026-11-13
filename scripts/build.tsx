@@ -5,6 +5,7 @@ import { renderToStaticMarkup } from 'react-dom/server';
 import { awards, community, projects } from '../src/data';
 import { identity, profiles } from '../src/profiles';
 import { Site } from '../src/site';
+import { realModelEvidenceAssets } from '../src/real-model-evidence';
 import type { Page } from '../src/site';
 
 const dist = resolve('dist');
@@ -75,7 +76,8 @@ async function build() {
   const cssName = `assets/site-${createHash('sha256').update(css).digest('hex').slice(0, 10)}.css`;
   await writeOutput(cssName, css);
   const publicAssets = new Set([
-    'mark.svg', 'media/virtual-staging/viewer.webp', 'media/evidence/welcome_day_stage.webp',
+    'mark.svg', 'media/virtual-staging/real-view.webp', 'media/virtual-staging/synthetic-viewer.webp', 'media/dqn-results.png',
+    ...realModelEvidenceAssets, 'media/evidence/welcome_day_stage.webp',
     'media/azurid-capture-isolation.svg', 'media/azurid-capture-isolation-mobile.svg',
     ...community.map(story => story.image),
     ...awards.map(award => award.image),

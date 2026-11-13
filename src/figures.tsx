@@ -23,11 +23,12 @@ function Signal() {
 export function Figure({ project, base, detail = false }: { project: Project; base: string; detail?: boolean }) {
   if (project.slug === 'azuridtwinup') {
     return <figure className={`project-figure visual-azurid${detail ? ' figure-detail' : ''}`}>
-      <picture>
-        <source media="(max-width: 600px)" srcSet={`${base}media/azurid-capture-isolation-mobile.svg`} width="380" height="367" />
-        <img src={`${base}media/azurid-capture-isolation.svg`} width="1000" height="480" loading="lazy" decoding="async" alt="Two fictional captures reuse station 07. Including the capture ID in the texture key routes each capture to its own cache entry." />
-      </picture>
-      <figcaption><span>Capture-scoped texture lookup</span><span>Architecture diagram</span></figcaption>
+      <div className="operations-diagram">
+        <div><small>01 / Acquire</small><strong>Site capture</strong><span>Pro3 LiDAR · drone imagery</span></div>
+        <div><small>02 / Process</small><strong>Spatial pipeline</strong><span>Alignment · E57 · GLB / KTX2</span></div>
+        <div><small>03 / Inspect</small><strong>Web platform</strong><span>Panoramas · geometry · qualified measurements</span></div>
+      </div>
+      <figcaption><span>From site acquisition to browser inspection</span><span>Pipeline schematic</span></figcaption>
     </figure>;
   }
 
@@ -44,8 +45,8 @@ export function Figure({ project, base, detail = false }: { project: Project; ba
 
   if (project.slug === 'webgpu-spatial-engine') {
     return <figure className={`project-figure visual-spatial${detail ? ' figure-detail' : ''}`}>
-      <img src={`${base}media/virtual-staging/viewer.webp`} width="1440" height="900" loading={detail ? 'eager' : 'lazy'} decoding="async" alt="The Babylon.js demo showing a synthetic interior and the virtual staging controls" />
-      <figcaption><span>Virtual staging viewer</span><span>Synthetic demo</span></figcaption>
+      <img src={`${base}media/virtual-staging/real-view.webp`} width="1920" height="1021" loading={detail ? 'eager' : 'lazy'} decoding="async" alt="Original living-room image from a Matterport Pro3 sample scan, captured at viewpoint 048" />
+      <figcaption><span>Apartment scan · viewpoint 048</span><span>Original capture</span></figcaption>
     </figure>;
   }
 
@@ -67,8 +68,27 @@ export function Figure({ project, base, detail = false }: { project: Project; ba
     </figure>;
   }
 
-  return <figure className={`project-figure visual-signal${detail ? ' figure-detail' : ''}`}>
+  if (project.slug === 'stethospeech-silent-speech') return <figure className={`project-figure visual-signal${detail ? ' figure-detail' : ''}`}>
     <div className="signal-area"><span className="signal-label">Non-audible murmur</span><Signal /><div className="signal-key"><span>Contact microphone</span><span>→</span><span>Speech representation</span></div></div>
     <figcaption><span>Silent speech pipeline</span><span>Illustration</span></figcaption>
+  </figure>;
+
+  if (project.slug === 'deep-q-learning') return <figure className={`project-figure visual-research${detail ? ' figure-detail' : ''}`}>
+    <img src={`${base}media/dqn-results.png`} width="1400" height="780" loading="lazy" decoding="async" alt="Three-seed mean evaluation returns for DQN, Double DQN and dueling networks across six environments. Pong remains near minus 21; TreasureGrid returns remain low." />
+    <figcaption><span>Original runs · seed mean ± sample SD</span><a href={`${base}media/dqn-results.png`}>Open full-size chart</a></figcaption>
+  </figure>;
+
+  const workflows: Record<string, [string, string][]> = {
+    'majara-frontend': [['Contracts', 'TypeBox schemas and canonical routes'], ['Application', 'Session state and domain transports'], ['Interface', 'React features and shared shell']],
+    'clinical-consultation-workflow': [['Case', 'Review context and documents'], ['Consultation', 'Complete configurable forms'], ['Team API', 'Persist through the shared backend']],
+    'english-french-translation': [['Corpus', 'Prepare paired English and French text'], ['Architectures', 'Recurrent and Transformer models'], ['Evaluation', 'Compare under a stated protocol']],
+    'word2vec-from-scratch': [['Context', 'Build training windows'], ['Objective', 'CBOW and Skip-gram'], ['Representation', 'Learn word embeddings']],
+    'voice-tutoring-prototype': [['Tutor UI', 'Choose a learning session'], ['Voice session', 'Connect through Vapi'], ['Session record', 'Transcript and metadata']],
+    'panoriha-advanced': [['Manage tours', 'Capture and station metadata'], ['API', 'NestJS and Prisma'], ['Storage', 'Assets in MinIO']],
+  };
+  const steps = workflows[project.slug] ?? [['Problem', project.category], ['Implementation', project.stack.slice(0, 2).join(' · ')], ['Evidence', project.status]];
+  return <figure className={`project-figure visual-system${detail ? ' figure-detail' : ''}`}>
+    <div className="operations-diagram">{steps.map(([title, body], i) => <div key={title}><small>0{i + 1}</small><strong>{title}</strong><span>{body}</span></div>)}</div>
+    <figcaption><span>{project.title}</span><span>Architecture schematic</span></figcaption>
   </figure>;
 }

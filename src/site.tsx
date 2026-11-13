@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { awards, community, projects } from './data';
 import type { Project } from './data';
 import { Figure } from './figures';
+import { RealModelEvidence } from './real-model-evidence';
 import { additionalWork, appliedAiWork, identity, profiles, spatialWork } from './profiles';
 import type { Profile } from './profiles';
 
@@ -59,8 +60,7 @@ function Hero({ base, profile }: { base: string; profile: Profile }) {
       <p className="availability"><span aria-hidden="true" /> Seeking a final-year internship · January 2027</p>
     </div>
     <figure className="hero-portrait">
-      <div className="portrait-image"><img src={`${base}media/evidence/welcome_day_stage.webp`} alt="Youcef speaking to students at ESI-SBA Welcome Day" width="1080" height="1080" fetchPriority="high" decoding="async" /></div>
-      <figcaption><span>ESI-SBA Welcome Day</span><span>INGENIUMS Club</span></figcaption>
+      <div className="portrait-image"><img src={`${base}media/evidence/welcome_day_stage.webp`} alt="Achouri Youcef Islem" width="790" height="875" fetchPriority="high" decoding="async" /></div>
     </figure>
   </section>;
 }
@@ -73,7 +73,7 @@ function ProjectRow({ project, base }: { project: Project; base: string }) {
   const url = `${base}work/${project.slug}/`;
   return <article className="project-row">
     <div className="project-copy">
-      <p className="eyebrow project-kicker"><span>{project.number}</span> {project.category}</p>
+      <p className="eyebrow project-kicker">{project.category}</p>
       <h3>{project.title}</h3>
       <p>{project.summary}</p>
       <p className="project-stack">{project.stack.join(' · ')}</p>
@@ -99,7 +99,7 @@ function Work({ base, profile }: { base: string; profile: Profile }) {
 function Community({ base }: { base: string }) {
   return <section id="community" className="section community" aria-labelledby="community-title">
     <div className="container">
-      <SectionHeading id="community-title" label="02 / Community" title="Beyond the lab">I’ve helped run student events, explained projects to visitors and competed alongside classmates.</SectionHeading>
+      <SectionHeading id="community-title" label="02 / Community" title="Beyond the lab">I’ve led a student club, organized events, and built community connections beyond the engineering curriculum.</SectionHeading>
       <div className="community-grid">{community.map((story, i) => <article key={story.title} className={`community-story community-story-${i + 1}`}>
         <figure><img src={`${base}${story.image}`} width={story.width} height={story.height} loading="lazy" decoding="async" alt={story.alt} /></figure>
         <div><p className="eyebrow">{story.eyebrow}</p><h3>{story.title}</h3><p>{story.body}</p></div>
@@ -116,7 +116,7 @@ function About({ base }: { base: string }) {
   return <section id="about" className="container section about" aria-labelledby="about-title">
     <SectionHeading id="about-title" label="03 / Background" title="About me" />
     <div className="about-grid"><div className="about-copy"><h3>Engineering, from the model to the interface.</h3><p>I’m in my fifth year at ESI-SBA, specializing in {identity.specialty}. I enjoy problems that cross layers of a system, such as getting a segmentation mask to line up with a scan or turning an Arabic instruction into data a program can validate.</p><p>My time with INGENIUMS gave me a second way to practice engineering. Presenting demos and coordinating events taught me to explain a technical idea clearly and make it easier for other people to contribute.</p><a className="text-link" href={`${base}resume/`}>View CVs <Arrow /></a></div>
-      <dl className="about-facts"><div><dt>Education</dt><dd>{identity.school}</dd><dd>Computer science engineering degree in progress</dd></div><div><dt>Based in</dt><dd>Algeria</dd></div><div><dt>Languages</dt><dd>English and French · Fluent</dd></div><div><dt>Tools I use</dt><dd>Python, PyTorch, NumPy, TypeScript, React, FastAPI and Babylon.js</dd></div></dl>
+      <dl className="about-facts"><div><dt>Education</dt><dd>{identity.school}</dd><dd>Computer science engineering degree in progress</dd></div><div><dt>Based in</dt><dd>Algeria</dd></div><div><dt>Languages</dt><dd>Arabic · Native</dd><dd>English and French · Fluent</dd></div><div><dt>Tools I use</dt><dd>Python, PyTorch, NumPy, TypeScript, React, React Router, Three.js, Babylon.js, NestJS, FastAPI, Django, Prisma, PostgreSQL, Docker, Agisoft Metashape and Git</dd></div></dl>
     </div>
   </section>;
 }
@@ -129,18 +129,30 @@ function CaseStudy({ project, base }: { project: Project; base: string }) {
   const others = projects.filter(candidate => candidate !== project);
   return <article className="container case-page">
     <a className="text-link back-link" href={`${base}#work`}><Arrow direction="left" /> Selected work</a>
-    <div className={`case-head${project.title.length > 32 ? ' case-head-long' : ''}`}><div><p className="eyebrow project-kicker"><span>{project.number}</span> {project.category}</p><h1>{project.title}</h1><p className="case-lead">{project.lead}</p>{project.demo && <div className="case-demo"><a className="button button-solid" href={`${base}${project.demo.path}`}>Open the interactive demo <Arrow /></a><p>{project.demo.note}</p></div>}</div><dl className="case-facts"><div><dt>Role</dt><dd>{project.role}</dd></div><div><dt>Project type</dt><dd>{project.status}</dd></div><div><dt>Tools</dt><dd>{project.stack.join(' · ')}</dd></div></dl></div>
+    <div className={`case-head${project.title.length > 32 ? ' case-head-long' : ''}`}><div><p className="eyebrow project-kicker">{project.category}</p><h1>{project.title}</h1><p className="case-lead">{project.lead}</p>{project.demo && <div className="case-demo"><a className="button button-solid" href={`${base}${project.demo.path}`}>Open the interactive demo <Arrow /></a><p>{project.demo.note}</p></div>}</div><dl className="case-facts"><div><dt>Role</dt><dd>{project.role}</dd></div><div><dt>Project type</dt><dd>{project.status}</dd></div><div><dt>Tools</dt><dd>{project.stack.join(' · ')}</dd></div></dl></div>
     <Figure project={project} base={base} detail />
-    <div className="case-body"><aside className="case-index"><p className="eyebrow">In this case study</p><nav aria-label="Case study sections"><a href="#problem">Problem</a><a href="#decisions">Engineering choices</a><a href="#outcome">Result</a><a href="#limits">Limits</a></nav>{project.repo && <a className="text-link" href={project.repo}>Source on GitHub <Arrow direction="up" /></a>}{project.walkthrough && <a className="text-link" href="#walkthrough">{project.walkthroughMedia ? 'Watch the walkthrough' : 'Request a walkthrough'} <Arrow direction="down" /></a>}</aside>
-      <div className="case-prose"><section id="problem"><p className="eyebrow">01</p><h2>The problem</h2><p>{project.problem}</p></section><section id="decisions"><p className="eyebrow">02</p><h2>Engineering choices</h2>{project.decisions.map(decision => <div key={decision.title} className="decision"><h3>{decision.title}</h3><p>{decision.body}</p></div>)}</section>
-      <section id="outcome"><p className="eyebrow">03</p><h2>Result</h2><p>{project.outcome}</p>{project.facts.length > 0 && <dl className="outcome-facts">{project.facts.map(fact => <div key={fact.label}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}</dl>}{project.evidenceImages?.map(evidence => <figure key={evidence.path} className={`case-evidence${evidence.width < evidence.height ? ' case-evidence-portrait' : ''}`}><img src={`${base}${evidence.path}`} alt={evidence.alt} width={evidence.width} height={evidence.height} loading="lazy" decoding="async" /><figcaption>{evidence.caption}</figcaption></figure>)}</section><section id="limits"><p className="eyebrow">04</p><h2>Limits</h2><p>{project.limits}</p></section>
-      {project.walkthrough && <section id="walkthrough"><h2>See the viewer</h2>{project.walkthroughMedia ? <>
-        <p>See station navigation and recovery from an interrupted load in two original synthetic inspection bays. 73 seconds with on-screen captions.</p>
+    <div className="case-body"><aside className="case-index"><p className="eyebrow">In this case study</p><nav aria-label="Case study sections">{project.context && <a href="#context">Context</a>}<a href="#problem">Problem</a><a href="#decisions">Engineering choices</a><a href="#outcome">Result</a><a href="#limits">Limits</a></nav>{project.repo && <a className="text-link" href={project.repo}>Source on GitHub <Arrow direction="up" /></a>}{project.walkthrough && <a className="text-link" href="#walkthrough">{project.walkthroughMedia ? 'Watch the walkthrough' : 'Request a walkthrough'} <Arrow direction="down" /></a>}</aside>
+      <div className="case-prose">{project.context && <section id="context"><p className="eyebrow">00</p><h2>Technical context</h2><p>{project.context}</p></section>}<section id="problem"><p className="eyebrow">01</p><h2>The problem</h2><p>{project.problem}</p></section><section id="decisions"><p className="eyebrow">02</p><h2>Engineering choices</h2>{project.decisions.map(decision => <div key={decision.title} className="decision"><h3>{decision.title}</h3><p>{decision.body}</p></div>)}</section>
+      <section id="outcome">
+        <p className="eyebrow">03</p>
+        <h2>Result</h2>
+        <p>{project.outcome}</p>
+        {project.facts.length > 0 && <dl className="outcome-facts">{project.facts.map(fact => <div key={fact.label}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}</dl>}
+        {project.slug === 'webgpu-spatial-engine' && <RealModelEvidence base={base} />}
+        {project.slug === 'webgpu-spatial-engine' && <figure className="case-evidence synthetic-stage-preview">
+          <img src={`${base}media/virtual-staging/synthetic-viewer.webp`} alt="The interactive Babylon.js demo with a staged chair in the explicitly synthetic room." width="1440" height="900" loading="lazy" decoding="async" />
+          <figcaption>Interactive furniture placement · synthetic room</figcaption>
+        </figure>}
+        {project.evidenceImages?.map(evidence => <figure key={evidence.path} className={`case-evidence${evidence.width < evidence.height ? ' case-evidence-portrait' : ''}`}><img src={`${base}${evidence.path}`} alt={evidence.alt} width={evidence.width} height={evidence.height} loading="lazy" decoding="async" /><figcaption>{evidence.caption}</figcaption></figure>)}
+      </section>
+      <section id="limits"><p className="eyebrow">04</p><h2>Limits</h2><p>{project.limits}</p></section>
+      {project.walkthrough && <section id="walkthrough"><h2>Explore AzuridTwinUp</h2><p>Hosting is currently in transition. The recorded demonstration below remains available; contact me to discuss the architecture and acquisition workflow.</p><div className="actions"><a className="button button-solid" href={`mailto:${identity.email}?subject=AzuridTwinUp%20project%20discussion`}>Discuss the project <Arrow direction="up" /></a></div><p>The demonstration covers viewer behaviour. A technical discussion can also cover LiDAR and image acquisition, panorama and mesh alignment, coordinate qualification and processing choices.</p>{project.walkthroughMedia ? <>
+        <h3>Recorded viewer behaviour</h3><p>This 73-second technical recording uses two synthetic inspection bays to demonstrate station navigation and recovery from an interrupted load. It does not show an industrial customer site.</p>
         <video className="case-walkthrough" controls playsInline preload="none" poster={`${base}${project.walkthroughMedia.poster}`} aria-label="AzuridTwinUp Viewer B walkthrough with on-screen captions">
           <source src={`${base}${project.walkthroughMedia.path}`} type="video/mp4" />
         </video>
         <details className="walkthrough-transcript"><summary>Read the walkthrough transcript</summary><ol>{project.walkthroughMedia.transcript.map(line => <li key={line}>{line}</li>)}</ol></details>
-      </> : <p>Get in touch to discuss a walkthrough of the viewer and the engineering behind it.</p>}<a className="text-link" href={`mailto:${identity.email}?subject=AzuridTwinUp%20walkthrough`}>Request a live walkthrough <Arrow direction="up" /></a></section>}</div>
+      </> : <p>Get in touch to discuss the viewer and the engineering behind it.</p>}</section>}</div>
     </div>
     <div className="related"><h2>More case studies</h2><ul>{others.map(other => <li key={other.slug}><a href={`${base}work/${other.slug}/`}>{other.title}<Arrow /></a></li>)}</ul></div>
   </article>;
