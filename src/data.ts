@@ -200,7 +200,7 @@ export const projects: Project[] = [
       },
       {
         "title": "Label regions, then refine selected boundaries",
-        "body": "Mask2Former (Swin-T backbone, trained on the ADE20K scene dataset with 150 classes) performs panoptic segmentation on each perspective face of the panorama, labeling every pixel. The pipeline groups these into seven application classes: floor, wall, ceiling, window, door, furniture, and other. Bounding boxes around candidate windows, doors, and furniture then prompt SAM (ViT-B), which produces refined instance masks. An overlap gate (threshold 0.30) compares each SAM proposal against the original Mask2Former label—proposals with insufficient overlap are rejected."
+        "body": "Mask2Former (Swin-T backbone, trained on the ADE20K scene dataset with 150 classes) performs semantic segmentation on each perspective face of the panorama, labeling every pixel. The pipeline groups these into seven application classes: floor, wall, ceiling, window, door, furniture, and other. Bounding boxes around candidate windows, doors, and furniture then prompt SAM (ViT-B), which produces refined instance masks. An overlap gate (threshold 0.30) compares each SAM proposal against the original Mask2Former label—proposals with insufficient overlap are rejected."
       },
       {
         "title": "Verify openings with 3D ray casting and depth",
