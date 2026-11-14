@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import { awards, community, projects } from './data';
 import type { Project } from './data';
 import { Figure } from './figures';
-import { RealModelEvidence } from './real-model-evidence';
 import { additionalWork, appliedAiWork, identity, profiles, spatialWork } from './profiles';
 import type { Profile } from './profiles';
 
@@ -138,7 +137,6 @@ function CaseStudy({ project, base }: { project: Project; base: string }) {
         <h2>Result</h2>
         <p>{project.outcome}</p>
         {project.facts.length > 0 && <dl className="outcome-facts">{project.facts.map(fact => <div key={fact.label}><dt>{fact.label}</dt><dd>{fact.value}</dd></div>)}</dl>}
-        {project.slug === 'webgpu-spatial-engine' && <RealModelEvidence base={base} />}
         {project.slug === 'webgpu-spatial-engine' && <figure className="case-evidence synthetic-stage-preview">
           <img src={`${base}media/virtual-staging/synthetic-viewer.webp`} alt="The interactive Babylon.js demo with a staged chair in the explicitly synthetic room." width="1440" height="900" loading="lazy" decoding="async" />
           <figcaption>Interactive furniture placement · synthetic room</figcaption>
@@ -146,8 +144,8 @@ function CaseStudy({ project, base }: { project: Project; base: string }) {
         {project.evidenceImages?.map(evidence => <figure key={evidence.path} className={`case-evidence${evidence.width < evidence.height ? ' case-evidence-portrait' : ''}`}><img src={`${base}${evidence.path}`} alt={evidence.alt} width={evidence.width} height={evidence.height} loading="lazy" decoding="async" /><figcaption>{evidence.caption}</figcaption></figure>)}
       </section>
       <section id="limits"><p className="eyebrow">04</p><h2>Limits</h2><p>{project.limits}</p></section>
-      {project.walkthrough && <section id="walkthrough"><h2>Explore AzuridTwinUp</h2><p>Hosting is currently in transition. The recorded demonstration below remains available; contact me to discuss the architecture and acquisition workflow.</p><div className="actions"><a className="button button-solid" href={`mailto:${identity.email}?subject=AzuridTwinUp%20project%20discussion`}>Discuss the project <Arrow direction="up" /></a></div><p>The demonstration covers viewer behaviour. A technical discussion can also cover LiDAR and image acquisition, panorama and mesh alignment, coordinate qualification and processing choices.</p>{project.walkthroughMedia ? <>
-        <h3>Recorded viewer behaviour</h3><p>This 73-second technical recording uses two synthetic inspection bays to demonstrate station navigation and recovery from an interrupted load. It does not show an industrial customer site.</p>
+      {project.walkthrough && <section id="walkthrough"><h2>AzuridTwinUp walkthrough</h2><p>Watch the earlier viewer demonstration or email me to discuss the architecture and acquisition workflow.</p><div className="actions"><a className="button button-solid" href={`mailto:${identity.email}?subject=AzuridTwinUp%20project%20discussion`}>Discuss the project <Arrow direction="up" /></a></div><p>The demonstration covers viewer behaviour. A technical discussion can also cover LiDAR and image acquisition, panorama and mesh alignment, coordinate qualification and processing choices.</p>{project.walkthroughMedia ? <>
+        <h3>Recorded viewer behaviour</h3><p>This 73-second technical recording uses two synthetic inspection bays to demonstrate station navigation and recovery from an interrupted load. The recording predates the current local authentication and preparation work.</p>
         <video className="case-walkthrough" controls playsInline preload="none" poster={`${base}${project.walkthroughMedia.poster}`} aria-label="AzuridTwinUp Viewer B walkthrough with on-screen captions">
           <source src={`${base}${project.walkthroughMedia.path}`} type="video/mp4" />
         </video>

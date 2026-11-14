@@ -4,3 +4,6 @@ dist/
 
 .vercel
 .env*
+
+/public/media/virtual-staging/real-model-evidence/
+/public/media/virtual-staging/real-view.webp

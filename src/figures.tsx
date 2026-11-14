@@ -26,7 +26,7 @@ export function Figure({ project, base, detail = false }: { project: Project; ba
       <div className="operations-diagram">
         <div><small>01 / Acquire</small><strong>Site capture</strong><span>Pro3 LiDAR · drone imagery</span></div>
         <div><small>02 / Process</small><strong>Spatial pipeline</strong><span>Alignment · E57 · GLB / KTX2</span></div>
-        <div><small>03 / Inspect</small><strong>Web platform</strong><span>Panoramas · geometry · qualified measurements</span></div>
+        <div><small>03 / Inspect</small><strong>Web platform</strong><span>Panoramas · geometry · station navigation</span></div>
       </div>
       <figcaption><span>From site acquisition to browser inspection</span><span>Pipeline schematic</span></figcaption>
     </figure>;
@@ -45,8 +45,8 @@ export function Figure({ project, base, detail = false }: { project: Project; ba
 
   if (project.slug === 'webgpu-spatial-engine') {
     return <figure className={`project-figure visual-spatial${detail ? ' figure-detail' : ''}`}>
-      <img src={`${base}media/virtual-staging/real-view.webp`} width="1920" height="1021" loading={detail ? 'eager' : 'lazy'} decoding="async" alt="Original living-room image from a Matterport Pro3 sample scan, captured at viewpoint 048" />
-      <figcaption><span>Apartment scan · viewpoint 048</span><span>Original capture</span></figcaption>
+      <img src={`${base}media/virtual-staging/synthetic-viewer.webp`} width="1920" height="1021" loading={detail ? 'eager' : 'lazy'} decoding="async" alt="Interactive furniture placement in a synthetic room" />
+      <figcaption><span>Furniture placement</span><span>Synthetic room</span></figcaption>
     </figure>;
   }
 

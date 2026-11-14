@@ -25,7 +25,7 @@ export const projects: Project[] = [
     "slug": "azuridtwinup",
     "category": "Industrial digital twin platform",
     "title": "AzuridTwinUp",
-    "summary": "An authenticated industrial digital-twin platform. My work spans Matterport Pro3 LiDAR and drone image acquisition, point-cloud and mesh processing, and the Three.js viewer and NestJS backend used to inspect a site.",
+    "summary": "Private industrial digital-twin platform. My work spans LiDAR and drone acquisition, scan and mesh processing, and a Three.js viewer with a NestJS backend.",
     "role": "Partner & Lead Spatial Systems Engineer — acquisition, processing pipeline, 3D viewer, backend",
     "stack": [
       "Python",
@@ -41,7 +41,7 @@ export const projects: Project[] = [
       "Prisma",
       "MinIO"
     ],
-    "status": "Private industrial platform · Partner · March 2026 – Present · Hosting transition",
+    "status": "Private platform · Partner · March 2026 – Present",
     "walkthrough": true,
     "walkthroughMedia": {
       "path": "media/azurid-walkthrough.mp4",
@@ -53,20 +53,20 @@ export const projects: Project[] = [
         "0:33–0:42 · Switch from Synthetic Bay A to Synthetic Bay B and open Station 1. The selected capture determines which panorama loads.",
         "0:42–0:52 · A deliberate missing panorama interrupts a station request. A working station can still open afterward.",
         "0:52–1:02 · Measurement is unavailable for an unqualified frame. A metric coordinate frame and supported up axis are required.",
-        "1:02–1:13 · The sealed build recorded 104 passing behavioral tests. Read the case study or request a walkthrough."
+        "1:02–1:13 · The recording reports 104 behavioural tests for the earlier isolated checkpoint."
       ]
     },
-    "lead": "As partner and lead spatial engineer at Azurid, I work across field acquisition, scan processing and the web platform. AzuridTwinUp combines panoramic inspection, meshes, site measurements and reporting behind authenticated access. The recorded demonstration below shows the viewer while hosting is in transition.",
-    "context": "AzuridTwinUp digitizes construction and industrial sites into navigable 3D digital twins. Two acquisition sources feed the platform: a Matterport Pro3 LiDAR scanner producing E57 point clouds with registered 360° panoramas (a single site can exceed 550 scan stations and 72 GB of raw data), and a DJI Mini 3 drone capturing aerial photographs for photogrammetric reconstruction. Point clouds and images are processed through Agisoft Metashape and RealityScan for alignment and mesh generation. When alignment fails—due to insufficient image overlap, reflective or textureless surfaces, or inconsistent lighting—I perform quality analysis on the misaligned image subsets, diagnose the root cause, and decide whether to adjust alignment parameters or re-acquire the affected area. The reconstructed mesh is converted from OBJ to GLB with Meshopt compression and KTX2 GPU-compressed textures via gltf-transform, then served through a NestJS API backed by Prisma and MinIO object storage.",
-    "problem": "An industrial site generates hundreds of scan stations and thousands of images. The pipeline must extract per-station point clouds and camera poses from multi-file E57 datasets, apply Matterport-specific cubemap face rotations so panoramas render correctly in Three.js, convert coordinate systems from the scanner’s Z-up to the viewer’s Y-up convention, and compress meshes for browser delivery. In the viewer, panoramas must be aligned with the 3D geometry, texture lookups must be scoped per capture to prevent cross-capture leaks, and measurements require a validated metric coordinate frame before any distance readout is reported.",
+    "lead": "As partner and lead spatial engineer at Azurid, I work across field acquisition, scan processing and the web platform. An earlier synthetic recording shows how the browser viewer navigates panoramas aligned with a 3D model.",
+    "context": "Matterport Pro3 LiDAR and DJI Mini 3 imagery support complementary interior and exterior capture workflows. I troubleshoot alignment in Metashape and RealityScan and prepare spatial assets for browser delivery.",
+    "problem": "An inspection viewer needs consistent geometry and station poses, capture-scoped imagery, and a recovery path when a panorama fails to load. Measurements also require a qualified coordinate frame.",
     "decisions": [
       {
         "title": "Acquire and align from two complementary sources",
         "body": "LiDAR scanning (Matterport Pro3) provides registered interior point clouds with camera poses at each station. Drone photogrammetry (DJI Mini 3) extends coverage to rooftops and exteriors. When Agisoft Metashape alignment produces gaps or drift, I run quality analysis on the misaligned image clusters—checking overlap coverage, detecting specular or textureless surfaces, and evaluating exposure consistency—then decide whether to adjust alignment parameters or re-acquire the affected area."
       },
       {
-        "title": "Process E57 scans through a custom extraction pipeline",
-        "body": "A Python toolchain (pye57, OpenCV, NumPy, SciPy, trimesh) extracts per-station point clouds, camera poses (quaternions + translations), and cubemap face images from multi-file E57 datasets. Matterport’s native pinhole images require canonical rotation and Z-axis inversion to render correctly as Three.js cubemap skyboxes. The MatterPak OBJ mesh is converted to GLB with Meshopt compression and KTX2 textures via gltf-transform and obj2gltf."
+        "title": "Prepare spatial inputs for the viewer",
+        "body": "Separate station poses and panoramas from the mesh. The preparation code expects posed imagery and an aligned mesh, with MatterPak serving as a possible mesh input. It records frame provenance without qualifying the frame for measurements."
       },
       {
         "title": "Scope texture lookups and recover from navigation failures",
@@ -74,27 +74,23 @@ export const projects: Project[] = [
       },
       {
         "title": "Validate coordinate frames before reporting measurements",
-        "body": "Before reporting any distance or area measurement, the viewer verifies that the coordinate frame declares a supported up axis (Y-up after the Z-up → Y-up ingestion transform) and metre units. Malformed tile descriptors are rejected and incoming rotations are normalized, preventing misleading readouts from unqualified frames."
+        "body": "The earlier recording shows measurement disabled for an unqualified frame. The newer R5 descriptor explicitly marks the frame unknown and leaves navigation available."
       }
     ],
-    "outcome": "The platform combines authenticated inspection with an E57 processing pipeline that handled a 550-station dataset of approximately 72 GB. The recorded Viewer B hardening checkpoint passed 104 behavioural tests and 18 integration tests across two protected captures. Hosting is currently in transition; the recorded viewer demonstration remains available below.",
-    "limits": "Measurement is disabled for unqualified coordinate frames. Mobile-device benchmarks and surveyed ground-truth measurement accuracy remain open. The recorded viewer checks cover navigation, access and coordinate handling. Live access is unavailable during the hosting transition.",
+    "outcome": "The earlier recording shows station navigation, a switch between two synthetic captures, and recovery after an interrupted panorama request. Separately, a local Chromium check loaded prepared Capture A and settled its first panorama.",
+    "limits": "The newer authenticated R5 opt-in, protected asset delivery and private preparation pipeline are implemented in local source and await execution and end-to-end verification. E57 preparation requires an extracted file. E57 ZIP ingestion is pending. Measurement remains unavailable on unqualified frames. Survey accuracy and mobile performance remain unmeasured.",
     "facts": [
       {
-        "label": "Product",
-        "value": "Private platform · Hosting transition"
+        "label": "Recorded demonstration",
+        "value": "Synthetic bays · station navigation and recovery"
       },
       {
-        "label": "Acquisition",
-        "value": "Pro3 LiDAR + DJI Mini 3 images"
+        "label": "Earlier isolated R5 checkpoint",
+        "value": "104 behavioural tests"
       },
       {
-        "label": "Recorded dataset",
-        "value": "550 stations · ~72 GB"
-      },
-      {
-        "label": "Recorded viewer checkpoint",
-        "value": "104 behavioural + 18 integration tests"
+        "label": "New local integration",
+        "value": "Implemented · runtime verification pending"
       }
     ]
   },
@@ -188,9 +184,9 @@ export const projects: Project[] = [
     "status": "Research prototype · 2026 · real sample evidence",
     "demo": {
       "path": "demos/virtual-staging/",
-      "note": "Interactive furniture placement in a synthetic room. The real scan and aligned model outputs are shown below."
+      "note": "Interactive furniture placement in a synthetic room. "
     },
-    "lead": "I built an offline scene-understanding pipeline using E57 scan geometry, Mask2Former and SAM, alongside a Babylon.js placement and occlusion viewer. The case study shows real apartment model outputs; the public interactive viewer demonstrates placement separately in a synthetic room.",
+    "lead": "I built an offline scene-understanding pipeline using E57 scan geometry, Mask2Former and SAM, alongside a Babylon.js placement and occlusion viewer. I evaluated model outputs on a Matterport sample. The public interactive viewer uses a synthetic room.",
     "context": "Matterport Pro3 is a LiDAR scanner. Its E57 exports contain point clouds and scan poses that can be related to panoramic imagery. This project combines those registered inputs with semantic segmentation and a browser renderer. It consumes existing scan registration and transforms coordinates; it does not implement a general-purpose LiDAR registration algorithm.",
     "problem": "A photograph can show where a doorway appears in the image, but placing a virtual object near it requires knowing where the camera stood, how far away the wall is, and what should remain visible in front of the object. The pipeline must transform scanner-native Z-up coordinates into the viewer’s Y-up frame, segment the scene into meaningful regions, and provide depth information so the viewer can occlude virtual furniture behind real geometry.",
     "decisions": [
@@ -211,8 +207,8 @@ export const projects: Project[] = [
         "body": "Babylon.js composites the unmodified photographic panorama with a depth-writing mesh derived from the scan and separately lit glTF furniture models. The depth-write mesh gives virtual objects a surface to rest on and allows real geometry closer to the camera to occlude them correctly."
       }
     ],
-    "outcome": "The offline pipeline produced seven-class Mask2Former labels across 21 viewpoints from a Matterport Pro3 sample. For viewpoint 048, 9 SAM proposals were generated and 8 passed the overlap gate (mean overlap: 0.67, range: 0.41–0.82). The case study compares the original input, semantic labels, accepted SAM refinements, and the 2,907 changed pixels (0.71% of 409,600). The interactive staging viewer demonstrates furniture placement in a separately labeled synthetic room.",
-    "limits": "The displayed model comparison documents one scan face from one viewpoint and does not measure segmentation accuracy against ground truth (IoU/mIoU) or inference latency. Furniture placement and occlusion controls are demonstrated on synthetic data; the real scan evidence covers the vision pipeline only.",
+    "outcome": "The offline pipeline produced seven-class Mask2Former labels across 21 viewpoints from a Matterport Pro3 sample. For viewpoint 048, 9 SAM proposals were generated and 8 passed the overlap gate (mean overlap: 0.67, range: 0.41–0.82). The refinement changed 2,907 pixels (0.71% of 409,600) on that face. The interactive staging viewer demonstrates furniture placement in a separately labeled synthetic room.",
+    "limits": "The model comparison covered one scan face from one viewpoint and does not measure segmentation accuracy against ground truth (IoU/mIoU) or inference latency. Furniture placement and occlusion controls are demonstrated on synthetic data; the real scan evidence covers the vision pipeline only.",
     "facts": [
       {
         "label": "Scan viewpoints processed",
@@ -775,7 +771,7 @@ export const projects: Project[] = [
       }
     ],
     "outcome": "Implemented a shared application shell with domain-specific interfaces, validated API contracts, canonical navigation and explicit session state. Tests import the production route and authentication modules. My contribution covers the frontend architecture and implementation; the backend belongs to the wider team.",
-    "limits": "The delivered scope is a web SPA. Academy and Horizon remain reserved domains without implemented landing routes. Runtime performance, accessibility and full cross-device behaviour need dedicated measurement; the architecture’s budgets are targets rather than published field results.",
+    "limits": "The delivered scope is a web SPA. Academy and Horizon remain reserved domains without implemented landing routes. Some quest and guild actions remain local UI or placeholders. Backend workflow, runtime performance, accessibility and cross-device behaviour require separate validation.",
     "facts": [
       {
         "label": "My scope",
