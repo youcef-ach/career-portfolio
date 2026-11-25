@@ -30,9 +30,9 @@ export const projects: Project[] = [
     "role": "Partner & Lead Spatial Systems Engineer — acquisition, processing pipeline, 3D viewer, backend",
     "stack": [
       "COLMAP",
-      "3DGS",
-      "DUSt3R / VGGSfM",
-      "VGGT",
+      "3DGS / 2DGS / SuGaR",
+      "DUSt3R / MASt3R",
+      "VGGSfM / VGGT",
       "MapAnything",
       "Agisoft Metashape",
       "RealityScan",
@@ -55,8 +55,8 @@ export const projects: Project[] = [
         "1:02–1:13 · The recording reports 104 behavioural tests for the earlier isolated checkpoint."
       ]
     },
-    "lead": "As Partner & Lead Spatial Systems Engineer at Azurid, I engineered the end-to-end pipeline connecting field sensor capture with browser-based inspection. My work bridges physical acquisition (terrestrial LiDAR and +2,000-image combined drone and terrestrial photogrammetry with Ground Control Points), scripted CLI processing automation, and an interactive Three.js viewer with a NestJS backend—complemented by technical evaluation and exploratory studies into 3D foundation models (DUSt3R, VGGSfM, VGGT, MapAnything) and 3D Gaussian Splatting (3DGS).",
-    "context": "Industrial site inspection requires fusing multi-scale capture sources: Matterport Pro3 LiDAR for dense, millimeter-accurate interior point clouds, and a combination of DJI Mini 3 drone imagery and terrestrial close-range camera photographs (+2,000 images with Ground Control Points) for complex exterior structures and terrain. My role encompasses the entire pipeline: physical acquisition, georeferenced alignment in Metashape and RealityScan, scripted CLI automation, geospatial verification in QGIS, asset optimization (E57, 3D Tiles, KTX2), and exploratory evaluation of neural representations (3DGS) and feed-forward geometric models (DUSt3R, VGGSfM, VGGT, MapAnything).",
+    "lead": "As Partner & Lead Spatial Systems Engineer at Azurid, I engineered the end-to-end pipeline connecting field sensor capture with browser-based inspection. My work bridges physical acquisition (terrestrial LiDAR and +2,000-image combined drone and terrestrial photogrammetry with Ground Control Points), scripted CLI processing automation, and an interactive Three.js viewer with a NestJS backend—complemented by technical evaluation and exploratory studies into 3D foundation models (DUSt3R, MASt3R, VGGSfM, VGGT, MapAnything) and Gaussian splatting representations (3DGS, 2DGS, SuGaR).",
+    "context": "Industrial site inspection requires fusing multi-scale capture sources: Matterport Pro3 LiDAR for dense, millimeter-accurate interior point clouds, and a combination of DJI Mini 3 drone imagery and terrestrial close-range camera photographs (+2,000 images with Ground Control Points) for complex exterior structures and terrain. My role encompasses the entire pipeline: physical acquisition, georeferenced alignment in Metashape and RealityScan, scripted CLI automation, geospatial verification in QGIS, asset optimization (E57, 3D Tiles, KTX2), and exploratory evaluation of neural representations (3DGS, 2DGS, SuGaR) and feed-forward geometric models (DUSt3R, MASt3R, VGGSfM, VGGT, MapAnything).",
     "problem": "An inspection viewer needs consistent geometry and station poses, capture-scoped imagery, and a recovery path when a panorama fails to load. Measurements also require a qualified coordinate frame.",
     "decisions": [
       {
@@ -68,8 +68,8 @@ export const projects: Project[] = [
         "body": "To scale beyond manual GUI processing, I scripted CLI workflows in Metashape and RealityScan to automate tie-point extraction, bundle adjustment, and dense cloud reconstruction. The pipeline automatically exports georeferenced digital terrain/surface models (DTM/DSM), orthomosaics, and 3D Tiles. Output layers are validated in QGIS for coordinate reference system (CRS) accuracy and elevation integrity before ingestion."
       },
       {
-        "title": "Evaluating feed-forward 3D foundation models (DUSt3R, VGGSfM, VGGT, MapAnything) and 3DGS",
-        "body": "Classical SfM and MVS pipelines (COLMAP, Metashape) depend heavily on handcrafted feature matching and incremental bundle adjustment, which scale slowly on textureless metal or sparse overlaps. Alongside running classical photogrammetry in production, I conducted technical study and lightweight exploratory tests across sample geometries using 3D Gaussian Splatting (3DGS) and recent feed-forward 3D foundation models—DUSt3R, VGGSfM, VGGT, and MapAnything—to analyze pose-free pointmap regression, metric scale recovery, and sparse-view convergence trade-offs."
+        "title": "Evaluating feed-forward 3D foundation models (DUSt3R, MASt3R, VGGSfM, VGGT, MapAnything) and 3DGS / 2DGS / SuGaR",
+        "body": "Classical SfM and MVS pipelines (COLMAP, Metashape) depend heavily on handcrafted feature matching and incremental bundle adjustment, which scale slowly on textureless metal or sparse overlaps. Alongside running classical photogrammetry in production, I conducted technical study and lightweight exploratory tests across sample geometries using Gaussian splatting variants (3DGS, 2DGS, SuGaR for surface-aligned mesh extraction) and recent feed-forward 3D foundation models—DUSt3R, MASt3R, VGGSfM, VGGT, and MapAnything—to analyze pose-free pointmap regression, metric scale recovery, and sparse-view convergence trade-offs."
       },
       {
         "title": "Prepare spatial inputs for the viewer",
@@ -89,7 +89,7 @@ export const projects: Project[] = [
       }
     ],
     "outcome": "The platform and automated pipeline are fully operational end-to-end. The system reliably processes multi-scale photogrammetry (+2,000 images with Ground Control Points) and terrestrial LiDAR scans, automatically generating georeferenced DTM/DSM elevation models, orthomosaics, and 3D Tiles verified in QGIS. The Three.js viewer delivers responsive station-to-station navigation, panoramic inspection, altitude and slope heatmaps, metric spatial measurements, and GPU-cached texture streaming backed by NestJS and MinIO. To protect commercial client confidentiality, public portfolio demonstrations feature a synthetic industrial inspection environment.",
-    "limits": "The primary technical constraint is local GPU compute capacity and VRAM budget. While the classical photogrammetry and browser delivery pipelines run at 100% operational scale, training or fine-tuning deep feed-forward foundation models (DUSt3R, VGGSfM, VGGT, MapAnything) and dense 3D Gaussian Splatting across thousands of 20MP industrial images rapidly exceeds workstation hardware limits. Experimental exploration was therefore focused on sample geometries, pre-trained weights, and trade-off analysis rather than full quantitative dataset benchmarks. Scaling these neural reconstruction architectures on university or host GPU clusters is the core objective of my PFE internship.",
+    "limits": "The primary technical constraint is local GPU compute capacity and VRAM budget. While the classical photogrammetry and browser delivery pipelines run at 100% operational scale, training or fine-tuning deep feed-forward foundation models (DUSt3R, MASt3R, VGGSfM, VGGT, MapAnything) and dense Gaussian splatting pipelines (3DGS, 2DGS, SuGaR) across thousands of 20MP industrial images rapidly exceeds workstation hardware limits. Experimental exploration was therefore focused on sample geometries, pre-trained weights, and trade-off analysis rather than full quantitative dataset benchmarks. Scaling these neural reconstruction architectures on university or host GPU clusters is the core objective of my PFE internship.",
     "facts": [
       {
         "label": "Pipeline status",
@@ -109,7 +109,7 @@ export const projects: Project[] = [
       },
       {
         "label": "Neural 3D exploration",
-        "value": "3DGS · DUSt3R · VGGSfM · VGGT · MapAnything"
+        "value": "3DGS · 2DGS · SuGaR · DUSt3R · MASt3R · VGGT"
       },
       {
         "label": "Public demonstration",

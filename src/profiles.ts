@@ -186,7 +186,7 @@ export const archiveGroups: ArchiveGroup[] = [
         title: 'AzuridTwinUp · Industrial Digital Twin Platform',
         year: '2026',
         scope: 'Production / Private Platform',
-        stack: 'Metashape Pro · RealityScan · QGIS · COLMAP · 3DGS · VGGT · Three.js · NestJS',
+        stack: 'Metashape Pro · RealityScan · QGIS · COLMAP · 3DGS / 2DGS / SuGaR · DUSt3R / MASt3R · VGGT · Three.js · NestJS',
         description: 'End-to-end photogrammetry pipeline (+2,000 drone & terrestrial images with GCPs), DTM/DSM generation, E57/3D Tiles browser viewer, altitude & slope heatmaps, and exploratory neural 3D model studies.',
         projectSlug: 'azuridtwinup',
       },
