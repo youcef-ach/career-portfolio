@@ -83,8 +83,10 @@ export function Figure({ project, base, detail = false }: { project: Project; ba
     'clinical-consultation-workflow': [['Case', 'Review context and documents'], ['Consultation', 'Complete configurable forms'], ['Team API', 'Persist through the shared backend']],
     'english-french-translation': [['Corpus', 'Prepare paired English and French text'], ['Architectures', 'Recurrent and Transformer models'], ['Evaluation', 'Compare under a stated protocol']],
     'word2vec-from-scratch': [['Context', 'Build training windows'], ['Objective', 'CBOW and Skip-gram'], ['Representation', 'Learn word embeddings']],
-    'voice-tutoring-prototype': [['Tutor UI', 'Choose a learning session'], ['Voice session', 'Connect through Vapi'], ['Session record', 'Transcript and metadata']],
-    'panoriha-advanced': [['Manage tours', 'Capture and station metadata'], ['API', 'NestJS and Prisma'], ['Storage', 'Assets in MinIO']],
+    'voice-tutoring-prototype': [['Tutor UI', 'Choose a learning session'], ['Voice session', 'Connect through Vapi'], ['Session record', 'User and tutor identifiers']],
+    'panoriha-advanced': [['Manage tours', 'Panoramas, scans and tags'], ['API', 'NestJS and Prisma'], ['Storage', 'Assets in MinIO']],
+    'tourvisto-ai-travel': [['Preferences', 'Destinations, interests and budget'], ['Backend AI', 'Django REST + Gemini validator'], ['Persistence', 'JWT auth + Postgres/SQLite trips']],
+    'apple-iphone-3d-showcase': [['Scroll stage', 'GSAP timelines & ScrollTrigger'], ['Dual WebGL', 'React Three Fiber + Drei Views'], ['Lighting rig', 'Titanium PBR & Lightformers']],
   };
   const steps = workflows[project.slug] ?? [['Problem', project.category], ['Implementation', project.stack.slice(0, 2).join(' · ')], ['Evidence', project.status]];
   return <figure className={`project-figure visual-system${detail ? ' figure-detail' : ''}`}>

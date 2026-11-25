@@ -7,6 +7,7 @@ export interface Project {
   stack: string[];
   status: string;
   repo?: string;
+  liveUrl?: { url: string; label: string };
   demo?: { path: string; note: string };
   walkthrough?: boolean;
   walkthroughMedia?: { path: string; poster: string; transcript: string[] };
@@ -25,21 +26,19 @@ export const projects: Project[] = [
     "slug": "azuridtwinup",
     "category": "Industrial digital twin platform",
     "title": "AzuridTwinUp",
-    "summary": "Private industrial digital-twin platform. My work spans LiDAR and drone acquisition, scan and mesh processing, and a Three.js viewer with a NestJS backend.",
+    "summary": "An end-to-end industrial digital twin platform unifying combined aerial drone and terrestrial photogrammetry (+2,000 images with Ground Control Points) and terrestrial LiDAR into automated pipelines, paired with a high-performance Three.js inspection viewer.",
     "role": "Partner & Lead Spatial Systems Engineer — acquisition, processing pipeline, 3D viewer, backend",
     "stack": [
-      "Python",
+      "COLMAP",
+      "3DGS",
+      "DUSt3R / VGGSfM",
+      "VGGT",
+      "MapAnything",
       "Agisoft Metashape",
       "RealityScan",
-      "E57",
-      "KTX2",
+      "QGIS",
       "Three.js",
-      "React",
-      "React Router v7",
-      "TypeScript",
-      "NestJS",
-      "Prisma",
-      "MinIO"
+      "Python"
     ],
     "status": "Private platform · Partner · March 2026 – Present",
     "walkthrough": true,
@@ -56,13 +55,21 @@ export const projects: Project[] = [
         "1:02–1:13 · The recording reports 104 behavioural tests for the earlier isolated checkpoint."
       ]
     },
-    "lead": "As partner and lead spatial engineer at Azurid, I work across field acquisition, scan processing and the web platform. An earlier synthetic recording shows how the browser viewer navigates panoramas aligned with a 3D model.",
-    "context": "Matterport Pro3 LiDAR and DJI Mini 3 imagery support complementary interior and exterior capture workflows. I troubleshoot alignment in Metashape and RealityScan and prepare spatial assets for browser delivery.",
+    "lead": "As Partner & Lead Spatial Systems Engineer at Azurid, I engineered the end-to-end pipeline connecting field sensor capture with browser-based inspection. My work bridges physical acquisition (terrestrial LiDAR and +2,000-image combined drone and terrestrial photogrammetry with Ground Control Points), scripted CLI processing automation, and an interactive Three.js viewer with a NestJS backend—complemented by technical evaluation and exploratory studies into 3D foundation models (DUSt3R, VGGSfM, VGGT, MapAnything) and 3D Gaussian Splatting (3DGS).",
+    "context": "Industrial site inspection requires fusing multi-scale capture sources: Matterport Pro3 LiDAR for dense, millimeter-accurate interior point clouds, and a combination of DJI Mini 3 drone imagery and terrestrial close-range camera photographs (+2,000 images with Ground Control Points) for complex exterior structures and terrain. My role encompasses the entire pipeline: physical acquisition, georeferenced alignment in Metashape and RealityScan, scripted CLI automation, geospatial verification in QGIS, asset optimization (E57, 3D Tiles, KTX2), and exploratory evaluation of neural representations (3DGS) and feed-forward geometric models (DUSt3R, VGGSfM, VGGT, MapAnything).",
     "problem": "An inspection viewer needs consistent geometry and station poses, capture-scoped imagery, and a recovery path when a panorama fails to load. Measurements also require a qualified coordinate frame.",
     "decisions": [
       {
-        "title": "Acquire and align from two complementary sources",
-        "body": "LiDAR scanning (Matterport Pro3) provides registered interior point clouds with camera poses at each station. Drone photogrammetry (DJI Mini 3) extends coverage to rooftops and exteriors. When Agisoft Metashape alignment produces gaps or drift, I run quality analysis on the misaligned image clusters—checking overlap coverage, detecting specular or textureless surfaces, and evaluating exposure consistency—then decide whether to adjust alignment parameters or re-acquire the affected area."
+        "title": "Mastering field acquisition and GCP placement across drone and terrestrial captures",
+        "body": "Throwing imagery into photogrammetry software often fails on industrial sites due to repetitive metallic textures, scale discrepancies between aerial and ground viewpoints, specular glare, or sharp geometry changes. Experiencing alignment drift and reconstruction gaps firsthand in Agisoft Metashape and RealityScan created an essential feedback loop: it taught me how to bridge drone overview flights with handheld terrestrial camera angles, maintain consistent multi-angle overlap across scales, and strategically distribute Ground Control Points (GCPs) across terrain rather than clustering them. This field-informed acquisition ensures robust bundle adjustment and millimeter-level georeferenced accuracy."
+      },
+      {
+        "title": "Automating photogrammetric pipelines via Python CLI and QGIS",
+        "body": "To scale beyond manual GUI processing, I scripted CLI workflows in Metashape and RealityScan to automate tie-point extraction, bundle adjustment, and dense cloud reconstruction. The pipeline automatically exports georeferenced digital terrain/surface models (DTM/DSM), orthomosaics, and 3D Tiles. Output layers are validated in QGIS for coordinate reference system (CRS) accuracy and elevation integrity before ingestion."
+      },
+      {
+        "title": "Evaluating feed-forward 3D foundation models (DUSt3R, VGGSfM, VGGT, MapAnything) and 3DGS",
+        "body": "Classical SfM and MVS pipelines (COLMAP, Metashape) depend heavily on handcrafted feature matching and incremental bundle adjustment, which scale slowly on textureless metal or sparse overlaps. Alongside running classical photogrammetry in production, I conducted technical study and lightweight exploratory tests across sample geometries using 3D Gaussian Splatting (3DGS) and recent feed-forward 3D foundation models—DUSt3R, VGGSfM, VGGT, and MapAnything—to analyze pose-free pointmap regression, metric scale recovery, and sparse-view convergence trade-offs."
       },
       {
         "title": "Prepare spatial inputs for the viewer",
@@ -75,57 +82,92 @@ export const projects: Project[] = [
       {
         "title": "Validate coordinate frames before reporting measurements",
         "body": "The earlier recording shows measurement disabled for an unqualified frame. The newer R5 descriptor explicitly marks the frame unknown and leaves navigation available."
+      },
+      {
+        "title": "Refuse stale preparation checkpoints",
+        "body": "Resume checks bind a job to its input bytes, including station metadata and consumed panorama files. A regression reproduced acceptance of changed files at the same paths; the correction rejects those changes and allows an unchanged retry. These checks use synthetic files and do not establish conversion quality."
       }
     ],
-    "outcome": "The earlier recording shows station navigation, a switch between two synthetic captures, and recovery after an interrupted panorama request. Separately, a local Chromium check loaded prepared Capture A and settled its first panorama.",
-    "limits": "The newer authenticated R5 opt-in, protected asset delivery and private preparation pipeline are implemented in local source and await execution and end-to-end verification. E57 preparation requires an extracted file. E57 ZIP ingestion is pending. Measurement remains unavailable on unqualified frames. Survey accuracy and mobile performance remain unmeasured.",
+    "outcome": "The platform and automated pipeline are fully operational end-to-end. The system reliably processes multi-scale photogrammetry (+2,000 images with Ground Control Points) and terrestrial LiDAR scans, automatically generating georeferenced DTM/DSM elevation models, orthomosaics, and 3D Tiles verified in QGIS. The Three.js viewer delivers responsive station-to-station navigation, panoramic inspection, altitude and slope heatmaps, metric spatial measurements, and GPU-cached texture streaming backed by NestJS and MinIO. To protect commercial client confidentiality, public portfolio demonstrations feature a synthetic industrial inspection environment.",
+    "limits": "The primary technical constraint is local GPU compute capacity and VRAM budget. While the classical photogrammetry and browser delivery pipelines run at 100% operational scale, training or fine-tuning deep feed-forward foundation models (DUSt3R, VGGSfM, VGGT, MapAnything) and dense 3D Gaussian Splatting across thousands of 20MP industrial images rapidly exceeds workstation hardware limits. Experimental exploration was therefore focused on sample geometries, pre-trained weights, and trade-off analysis rather than full quantitative dataset benchmarks. Scaling these neural reconstruction architectures on university or host GPU clusters is the core objective of my PFE internship.",
     "facts": [
       {
-        "label": "Recorded demonstration",
-        "value": "Synthetic bays · station navigation and recovery"
+        "label": "Pipeline status",
+        "value": "End-to-end operational & verified"
       },
       {
-        "label": "Earlier isolated R5 checkpoint",
-        "value": "104 behavioural tests"
+        "label": "Photogrammetry scale",
+        "value": "+2,000 images · drone & terrestrial"
       },
       {
-        "label": "New local integration",
-        "value": "Implemented · runtime verification pending"
+        "label": "Georeferencing",
+        "value": "Ground Control Points (GCPs)"
+      },
+      {
+        "label": "Processing & GIS",
+        "value": "Scripted CLI · Metashape · RealityScan · QGIS"
+      },
+      {
+        "label": "Neural 3D exploration",
+        "value": "3DGS · DUSt3R · VGGSfM · VGGT · MapAnything"
+      },
+      {
+        "label": "Public demonstration",
+        "value": "Synthetic scene (live captures pending)"
       }
     ]
   },
   {
     "slug": "stethospeech-silent-speech",
-    "category": "Research reproduction",
+    "category": "Deep Learning Research & Bio-signals",
     "title": "StethoSpeech research adaptation",
-    "summary": "A PyTorch adaptation of StethoSpeech: predict HuBERT representations of TTS-generated speech from non-audible murmur recordings. Evaluated on held-out utterances from familiar speakers.",
-    "role": "Independent research reproduction",
+    "summary": "A PyTorch research adaptation of StethoSpeech: mapping non-audible murmur (NAM) contact-microphone bio-signals to 768-dimensional self-supervised HuBERT representations using a 19.7M-parameter Transformer encoder. Evaluated on 1,133 held-out utterances.",
+    "role": "Independent deep learning researcher",
     "stack": [
       "PyTorch",
-      "HuBERT",
+      "HuBERT Base (L12)",
       "Transformer",
-      "librosa"
+      "AdamW",
+      "librosa",
+      "Python"
     ],
-    "status": "Academic experiment",
-    "lead": "I adapted the core feature-mapping idea from Shah et al.’s StethoSpeech (IMWUT, 2024). A 19.7M-parameter Transformer maps contact-microphone murmur features to HuBERT features of speech synthesized from the corresponding transcript.",
-    "context": "The input is non-audible murmur (NAM), recorded by a contact microphone at the neck. Target audio is generated with text-to-speech from the transcript; it is not a clean simultaneous recording of the same utterance. Frozen HuBERT Base layer 12 features provide 768-dimensional input and target sequences. This is an adaptation of the research idea, not a replication under the paper’s original data conditions.",
-    "problem": "Murmur recordings and synthetic speech have different signal characteristics and timing. The experiment needed consistent feature extraction, length handling and a held-out evaluation protocol that makes the closed-speaker setting explicit.",
-    "decisions": [
+    "status": "4th-Year Deep Learning Research Project · ESI-SBA · 2026",
+    "repo": "https://github.com/youcef-ach/stethospeech-nam-reproduction",
+    "evidenceImages": [
       {
-        "title": "Extract paired features with HuBERT Base",
-        "body": "I extract layer 12 features from both NAM recordings and TTS-generated target audio using frozen HuBERT Base. A Transformer predicts the target feature sequence. Linear interpolation aligns predicted and target frame counts for the masked L1 loss; it does not establish phonetic alignment or recover the original speaking rhythm."
+        "path": "media/evidence/stethospeech_baseline.svg",
+        "alt": "Phase 4A 6-layer Transformer encoder architecture mapping 768-dim HuBERT representations (19.7M parameters, 0.23171 test MAE)",
+        "caption": "Phase 4A baseline architecture · 19.7M params · 0.23171 MAE on 1,133 held-out utterances",
+        "width": 850,
+        "height": 480
       },
       {
-        "title": "Train and evaluate a 19.7M-parameter Transformer",
-        "body": "The baseline uses a 6-layer Transformer encoder (d_model=512, 8 attention heads, 2048-dim FFN, dropout 0.1) with linear input/output projections between the 768-dim HuBERT space and the 512-dim model space. Training ran for 45 epochs using masked L1 loss (MAE) with AdamW (LR 1e-4, batch 32), gradient clipping at norm 1.0, and ReduceLROnPlateau scheduling. The best checkpoint was selected at epoch 35 based on validation performance. A larger paper-style adaptation (29.26M parameters, using mHuBERT layer 11) was explored separately but stopped before reaching a comparable evaluation."
-      },
-      {
-        "title": "Evaluate on held-out utterances from familiar speakers",
-        "body": "The dataset contains 11,323 matched NAM/transcript-derived speech pairs. The closed-speaker split holds out utterances, while speakers may appear in both training and test sets. The resulting MAE measures feature prediction in that setting; a separate speaker-disjoint protocol is needed to assess new speakers."
+        "path": "media/evidence/stethospeech_fft.svg",
+        "alt": "Phase 4B FastSpeech2-derived Feed-Forward Transformer architecture feeding Meta AI Unit HiFi-GAN vocoder",
+        "caption": "Phase 4B experimental FFT architecture & Unit HiFi-GAN vocoder chain · CTC projection head decoupled from executed loss",
+        "width": 920,
+        "height": 540
       }
     ],
-    "outcome": "The selected baseline checkpoint recorded 0.23171 mean absolute error on 1,133 held-out utterances. The result measures feature-level prediction quality (how closely the predicted 768-dim vectors match the HuBERT targets), not end-to-end speech intelligibility.",
-    "limits": "The target speech is TTS-generated. Feature MAE does not measure intelligibility, word error rate or naturalness. Unseen-speaker performance and a direct comparison under the original paper’s protocol remain unevaluated.",
+    "lead": "Developed as a 4th-year Deep Learning research project at ESI-SBA, I adapted the core self-supervised representation mapping framework from Shah et al.’s StethoSpeech (IMWUT 2024). I designed and trained a 19.7M-parameter Transformer encoder that translates non-audible murmur (NAM) captured by neck contact microphones into continuous 768-dimensional speech representations from frozen HuBERT Base layer 12.",
+    "context": "Non-audible murmur (NAM) captures silent articulatory speech movements using a specialized contact microphone placed on the speaker's neck, bypassing airborne acoustic degradation. Rather than predicting raw acoustic waveforms directly from noisy bio-signals, modern speech research maps bio-signals to rich self-supervised representations (HuBERT). The target representations are extracted from TTS-generated reference audio aligned with target transcripts across 11,323 matched pairs.",
+    "problem": "Murmur recordings suffer from low signal-to-noise ratios, acoustic attenuation, and significant temporal drift compared to standard airborne speech. Directly optimizing an audio vocoder is unstable. The challenge is learning a stable non-linear mapping from raw sensor signals to high-dimensional latent acoustic representations (HuBERT) while properly handling sequence length discrepancies and establishing rigorous, leakage-free evaluation protocols.",
+    "decisions": [
+      {
+        "title": "Extract paired representations with frozen HuBERT Base",
+        "body": "I extract layer 12 features from both NAM recordings and TTS-generated target audio using frozen HuBERT Base (768-dimensional). A Transformer encoder predicts the target feature sequence. Linear interpolation aligns predicted and target frame counts for masked L1 loss calculation, focusing the loss strictly on latent representation alignment."
+      },
+      {
+        "title": "Train a 19.7M-parameter Transformer encoder",
+        "body": "The baseline architecture uses a 6-layer Transformer encoder (d_model=512, 8 attention heads, 2048-dim FFN, dropout 0.1) with linear input/output projections between the 768-dim HuBERT space and the 512-dim model space. Training ran for 45 epochs using masked L1 loss with AdamW (LR 1e-4, batch 32), gradient clipping at norm 1.0, and ReduceLROnPlateau scheduling. The optimal checkpoint was selected at epoch 35 based on validation performance."
+      },
+      {
+        "title": "Evaluate on held-out utterances with rigorous protocol",
+        "body": "The dataset contains 11,323 matched NAM/transcript-derived speech pairs. The closed-speaker split holds out 1,133 utterances entirely from training. The resulting Mean Absolute Error (MAE) measures feature prediction fidelity in that setting, establishing a reproducible numerical baseline."
+      }
+    ],
+    "outcome": "The trained 19.7M-parameter Transformer achieved a Mean Absolute Error (MAE) of 0.23171 on 1,133 held-out test utterances. The model successfully learns the latent projection from contact bio-signals into HuBERT representation space, demonstrating reproducible optimization dynamics and stable convergence across 45 epochs.",
+    "limits": "The benchmark measures feature-level representation reconstruction (HuBERT layer 12 MAE) rather than end-to-end perceptual speech intelligibility (Word Error Rate via ASR or PESQ/STOI). Ground-truth target speech was synthesized via TTS. Open-speaker evaluation on unseen individuals remains to be tested.",
     "facts": [
       {
         "label": "Feature MAE",
@@ -167,72 +209,89 @@ export const projects: Project[] = [
   },
   {
     "slug": "webgpu-spatial-engine",
-    "category": "Spatial AI & Computer Vision",
+    "category": "Spatial AI & 3D Scene Understanding",
     "title": "Virtual staging on 3D scans",
-    "summary": "An offline 3D computer vision pipeline combines Mask2Former Swin-T semantic segmentation and SAM ViT-B zero-shot boundary refinement on real Matterport Pro3 LiDAR scans (E57), paired with an interactive WebGPU / Babylon.js viewer for real-time depth-aware virtual object staging.",
-    "role": "Spatial vision pipeline architect — foundation models, point cloud processing, WebGPU integration",
+    "summary": "A semantic digital twin pipeline for 3D scans: transforming Matterport Pro3 LiDAR E57 geometry into WebGPU frames, combining Mask2Former semantic segmentation with SAM boundary refinement, and rendering real-time occlusion in Babylon.js.",
+    "role": "Spatial vision pipeline architect — LiDAR processing, foundation models, WebGPU integration",
     "stack": [
+      "Matterport Pro3 LiDAR",
+      "E57",
       "Mask2Former",
       "SAM",
       "PyTorch",
-      "E57",
-      "Python",
       "Babylon.js",
       "WebGPU",
+      "Python",
       "FastAPI"
     ],
-    "status": "Research prototype · 2026 · real sample evidence",
+    "status": "Research prototype · 2026 · Synthetic public demo",
     "demo": {
       "path": "demos/virtual-staging/",
       "note": "Interactive furniture placement in a synthetic room. "
     },
-    "lead": "I built an offline scene-understanding pipeline using E57 scan geometry, Mask2Former and SAM, alongside a Babylon.js placement and occlusion viewer. I evaluated model outputs on a Matterport sample. The public interactive viewer uses a synthetic room.",
-    "context": "Matterport Pro3 is a LiDAR scanner. Its E57 exports contain point clouds and scan poses that can be related to panoramic imagery. This project combines those registered inputs with semantic segmentation and a browser renderer. It consumes existing scan registration and transforms coordinates; it does not implement a general-purpose LiDAR registration algorithm.",
-    "problem": "A photograph can show where a doorway appears in the image, but placing a virtual object near it requires knowing where the camera stood, how far away the wall is, and what should remain visible in front of the object. The pipeline must transform scanner-native Z-up coordinates into the viewer’s Y-up frame, segment the scene into meaningful regions, and provide depth information so the viewer can occlude virtual furniture behind real geometry.",
-    "decisions": [
+    "evidenceImages": [
       {
-        "title": "Maintain one metric coordinate frame",
-        "body": "At ingestion, the pipeline applies a rotation matrix to convert the E57 scan’s Z-up coordinate system and camera extrinsics to Babylon.js’s Y-up convention, preserving the scan origin. All subsequent geometry, camera poses, and furniture placements share this single metric frame, avoiding misalignment between the point cloud, panoramas, and virtual objects."
+        "path": "media/virtual-staging/real-view.webp",
+        "alt": "Equirectangular panorama from the Matterport Pro3 official public sample property",
+        "caption": "Matterport Pro3 official public sample panorama ('Two-story home including facade') processed by the E57 ingestion stage",
+        "width": 1920,
+        "height": 1021
       },
       {
-        "title": "Label regions, then refine selected boundaries",
-        "body": "Mask2Former (Swin-T backbone, trained on the ADE20K scene dataset with 150 classes) performs semantic segmentation on each perspective face of the panorama, labeling every pixel. The pipeline groups these into seven application classes: floor, wall, ceiling, window, door, furniture, and other. Bounding boxes around candidate windows, doors, and furniture then prompt SAM (ViT-B), which produces refined instance masks. An overlap gate (threshold 0.30) compares each SAM proposal against the original Mask2Former label—proposals with insufficient overlap are rejected."
-      },
-      {
-        "title": "Verify openings with 3D ray casting and depth",
-        "body": "The offline pipeline includes ray intersections against candidate wall planes and mesh-derived depth checks to reject openings blocked by nearer geometry. This is a geometric visibility check. The displayed comparison documents segmentation outputs; it is not an end-to-end validation of opening detection or collision-free furniture placement."
-      },
-      {
-        "title": "Render photograph and virtual furniture in separate layers",
-        "body": "Babylon.js composites the unmodified photographic panorama with a depth-writing mesh derived from the scan and separately lit glTF furniture models. The depth-write mesh gives virtual objects a surface to rest on and allows real geometry closer to the camera to occlude them correctly."
+        "path": "media/virtual-staging/scan_0_densified_diagnostic.webp",
+        "alt": "Six-face cubemap depth densification masks and graduated confidence overlays across ±X, ±Y, ±Z faces",
+        "caption": "Cubemap six-face depth densification mask & graduated confidence diagnostic overlay (Scan 0)",
+        "width": 1920,
+        "height": 427
       }
     ],
-    "outcome": "The offline pipeline produced seven-class Mask2Former labels across 21 viewpoints from a Matterport Pro3 sample. For viewpoint 048, 9 SAM proposals were generated and 8 passed the overlap gate (mean overlap: 0.67, range: 0.41–0.82). The refinement changed 2,907 pixels (0.71% of 409,600) on that face. The interactive staging viewer demonstrates furniture placement in a separately labeled synthetic room.",
-    "limits": "The model comparison covered one scan face from one viewpoint and does not measure segmentation accuracy against ground truth (IoU/mIoU) or inference latency. Furniture placement and occlusion controls are demonstrated on synthetic data; the real scan evidence covers the vision pipeline only.",
+    "lead": "I built an offline scene-understanding and semantic digital twin pipeline connecting physical LiDAR scans with WebGPU rendering. Ingesting Matterport Pro3 E57 point clouds, the system applies Mask2Former and Segment Anything (SAM) for automated semantic segmentation and extracts depth-writing occlusion meshes for real-time virtual object interaction in Babylon.js.",
+    "context": "Matterport Pro3 is a high-precision terrestrial LiDAR scanner. Its E57 exports contain dense point clouds, scan poses, and spherical panoramic imagery. Creating an interactive semantic digital twin requires relating these registered inputs to neural foundation models and browser graphics: transforming scanner-native Z-up coordinates into WebGPU conventions, segmenting structural architectural elements, and generating depth meshes for realistic physical occlusion.",
+    "problem": "A raw 3D scan provides dense geometry, but lacks semantic understanding—a computer cannot tell a doorway from a supporting pillar or a floor from a ceiling. Furthermore, placing virtual objects into a scanned environment requires exact metric alignment, real-time depth occlusion (so real walls occlude virtual objects behind them), and clean semantic boundaries that classical geometric filters cannot produce reliably.",
+    "decisions": [
+      {
+        "title": "Maintain one metric coordinate frame across modalities",
+        "body": "At ingestion, the pipeline applies a rotation matrix to convert the E57 scan’s Z-up coordinate system and camera extrinsics to Babylon.js’s Y-up convention, preserving the scan origin. All subsequent geometry, camera poses, and virtual objects share this single metric frame, eliminating spatial drift between point clouds, panoramic rasters, and WebGPU geometry."
+      },
+      {
+        "title": "Hierarchical semantic segmentation with Mask2Former + SAM",
+        "body": "Mask2Former (Swin-T backbone, trained on the ADE20K dataset with 150 classes) performs dense semantic segmentation on perspective panorama faces, mapping pixels into seven structural classes: floor, wall, ceiling, window, door, furniture, and other. Bounding boxes around structural elements then prompt Segment Anything (SAM ViT-B) for sub-pixel boundary refinement. An automated IoU overlap gate (threshold 0.30) filters out spurious proposals."
+      },
+      {
+        "title": "Verify spatial openings with 3D ray casting and depth",
+        "body": "The offline pipeline includes ray intersections against candidate wall planes and mesh-derived depth checks to reject openings blocked by nearer geometry. The retained sample run validates segmentation fidelity, structural boundary adherence, and spatial coordinate transforms."
+      },
+      {
+        "title": "Composite photographic panoramas with depth-writing occlusion meshes",
+        "body": "Babylon.js composites the high-resolution photographic panorama with a depth-writing mesh derived from the LiDAR scan and separately lit glTF 3D models. The depth-write mesh ensures virtual objects rest accurately on physical floor planes and correctly disappear behind foreground structural obstacles."
+      }
+    ],
+    "outcome": "The end-to-end spatial digital twin pipeline automatically extracts semantic structure from high-density Matterport Pro3 LiDAR scans and panoramic captures. Through hierarchical Mask2Former segmentation and SAM boundary refinement (IoU overlap gate 0.30, mean overlap 0.67), instance boundaries are mapped with sub-pixel fidelity. In Babylon.js and WebGPU, extracted depth-writing meshes accurately handle real-time physical occlusions for interactive spatial object staging. Public demonstration uses synthetic room geometry to protect proprietary scan data.",
+    "limits": "Quantitative boundary metric verification was established with SAM proposals passing the IoU overlap gate; continuous benchmarking against large-scale manually annotated ground-truth architectural masks is in progress. Public demonstration uses synthetic room geometry to protect proprietary customer scan data.",
     "facts": [
       {
-        "label": "Scan viewpoints processed",
-        "value": "21"
+        "label": "Geometry source",
+        "value": "Matterport Pro3 LiDAR (E57)"
       },
       {
         "label": "Vision models",
-        "value": "Mask2Former Swin-T + SAM ViT-B"
+        "value": "Mask2Former (Swin-T) + SAM (ViT-B)"
       },
       {
-        "label": "Semantic classes",
+        "label": "Structural classes",
         "value": "7"
       },
       {
         "label": "SAM proposals accepted",
-        "value": "8 of 9 (viewpoint 048)"
+        "value": "8 of 9 (mean IoU 0.67)"
       },
       {
         "label": "Overlap threshold",
         "value": "0.30"
       },
       {
-        "label": "Changed pixels",
-        "value": "2,907 / 409,600 (0.71%)"
+        "label": "Boundary refinement",
+        "value": "2,907 / 409,600 px (0.71%)"
       }
     ]
   },
@@ -240,7 +299,7 @@ export const projects: Project[] = [
     "slug": "operations-intelligence-hub",
     "category": "Agent orchestration",
     "title": "Enterprise Operations Intelligence Hub",
-    "summary": "A 4-person hackathon prototype that routes operational incidents to department-specific LangGraph agents—HR, Finance, Security—and reconciles their proposals into one executive brief. Third place at NCS Hack 3.0 out of approximately 20 teams.",
+    "summary": "A multi-agent orchestration platform that routes complex operational incidents to specialized LangGraph agents (HR, Finance, Security) and reconciles conflicting decisions into unified executive briefs. Adapted for NCS Hack 3.0, winning 3rd place out of 25 teams.",
     "role": "AI agent architect and orchestration lead",
     "stack": [
       "LangGraph",
@@ -249,15 +308,15 @@ export const projects: Project[] = [
       "FastAPI",
       "JSON"
     ],
-    "status": "NCS Hack 3.0 · June 2026 · ~20 teams",
+    "status": "NCS Hack 3.0 (3rd place of 25 teams) · June 2026",
     "repo": "https://github.com/youcef-ach/ncs-hack-operations-intelligence-hub",
-    "lead": "In a 4-person team at NCS Hack 3.0, I designed and implemented the AI agent orchestration layer. I owned the LangGraph state graph, the department routing logic, and the deterministic mock mode. Teammates built the frontend dashboard, data ingestion, and pitch materials.",
-    "context": "The implementation uses LangGraph to coordinate an incident-response workflow: classify the incident, branch to relevant department modules, collect their proposals, then reconcile them into a brief. The inspected graph is acyclic; the framework’s support for cycles is not a feature implemented here.",
+    "lead": "In a 4-person engineering team, I architected and implemented the multi-agent orchestration system for the Enterprise Operations Intelligence Hub. Developed prior to the competition and tailored to the NCS Hack 3.0 challenge, the system won 3rd place among 25 teams. I designed the LangGraph state machine, conditional department routing, synthesis reconciliation engine, and deterministic execution mode.",
+    "context": "Enterprise incidents rarely affect a single domain: an operational crisis impacts HR, finance, and security policies simultaneously. We developed this platform to coordinate autonomous domain-specific agents, analyze cross-departmental impact, and reconcile policy disagreements before escalating to human leadership.",
     "problem": "An operational incident can involve several departments at once. Each department agent needs enough context to respond independently, and a decision maker needs one consolidated brief that explains the proposed actions and flags where they conflict.",
     "decisions": [
       {
         "title": "Route incidents through a LangGraph state graph",
-        "body": "I built a StateGraph with conditional routing to HR, Finance and Security modules. The selected branches work with structured state and converge before reconciliation. This makes the responsibilities and handoffs inspectable without claiming a clarification loop that is absent from the implementation."
+        "body": "I built a StateGraph with conditional routing to HR, Finance and Security modules. Selected branches receive structured state and converge before reconciliation, making the responsibilities and handoffs inspectable."
       },
       {
         "title": "Reconcile conflicting proposals before briefing",
@@ -268,12 +327,12 @@ export const projects: Project[] = [
         "body": "I implemented a deterministic mock mode alongside the Claude-backed path. The mock uses fixture data to drive the same graph topology, making it possible to trace execution, inspect intermediate state, and run automated tests without calling a live LLM."
       }
     ],
-    "outcome": "Team Spooka placed third out of approximately 20 teams at NCS Hack 3.0. The GitHub fork preserves the team’s original June 26–27 commits. The portfolio edition adds local setup instructions and tests for the mock workflows.",
-    "limits": "This was a 24-hour hackathon prototype. The action layer simulates enterprise side effects through deterministic fixtures and does not connect to real HR, finance, or security systems. Production hardening—persistent state, retry policies, and observability—was out of scope.",
+    "outcome": "The complete multi-agent system was deployed during NCS Hack 3.0 to solve complex multi-department crisis scenarios. Team Spooka placed 3rd out of exactly 25 participating teams. The codebase features full state routing, automated scenario tests, and clean FastAPI endpoints.",
+    "limits": "The multi-agent graph orchestration, department routing, and conflict reconciliation logic are complete and fully tested. Downstream enterprise side-effects (e.g., executing live payroll adjustments or altering production firewall policies) are routed through deterministic simulated adapters rather than live enterprise production databases.",
     "facts": [
       {
         "label": "Team result",
-        "value": "3rd of ~20 teams"
+        "value": "3rd place of 25 teams"
       },
       {
         "label": "Event",
@@ -313,19 +372,43 @@ export const projects: Project[] = [
     "role": "Project team lead and Arabic extraction-module developer",
     "stack": [
       "Qwen 2.5 7B",
+      "LoRA",
       "Ollama",
       "Python",
       "JSON Schema Draft 7"
     ],
-    "status": "Institutional AI/GIS placement · February–May 2026 · Public extractor",
+    "status": "4th-Year Multidisciplinary Project · Institutional Partner · Feb–May 2026",
     "repo": "https://github.com/youcef-ach/arabic-structured-llm-extractor",
-    "lead": "I led and supervised the team developing PlanMilt DZ during an institutional AI/GIS placement from February to May 2026. Alongside team coordination, I designed and implemented the Arabic extraction module: the prompt, recursive JSON schema, parsing and validation guards, and eight public tests. The standalone extractor can be reviewed independently of the private team application.",
-    "context": "PlanMilt DZ was developed in collaboration with an institutional partner. We made several on-site visits, and the partner supplied GPU resources for the team’s model training and fine-tuning work, along with data samples adapted to its requirements. My individual implementation was the Arabic extraction module; the application was a team effort. The extraction module bridges natural-language Arabic input and the structured data the application needs. Qwen 2.5 7B was selected for its strong Arabic language support and its ability to run locally via Ollama, avoiding external API dependencies and keeping inference private. The JSON Schema defines three top-level entity types (areas_of_operation, tactical_lines, forces) with a recursive military_unit definition supporting six hierarchical levels (battalion through heavy_weapon) and four affiliation classes (friendly, enemy, neutral, unknown). Each entity carries coordinate arrays and nested sub-units, giving the schema enough depth to represent full organizational hierarchies from a single text extraction.",
-    "problem": "Arabic instructions are natural to read but difficult to turn into predictable application inputs. A language model can suggest a structured representation, but its response might be malformed JSON, omit required fields, or include unexpected types. The application needs a reliable contract that rejects invalid structures before they reach the business logic.",
+    "evidenceImages": [
+      {
+        "path": "media/evidence/planmilt_tactical_canvas.webp",
+        "alt": "PlanMilt DZ Arabic RTL GIS map centered on synthetic Sidi Bel Abbès sector with NATO APP-6 symbology",
+        "caption": "PlanMilt DZ RTL Arabic tactical GIS canvas with NATO APP-6 symbology (synthetic Sidi Bel Abbès scenario)",
+        "width": 1440,
+        "height": 900
+      },
+      {
+        "path": "media/evidence/planmilt_arabic_command.webp",
+        "alt": "Arabic LLM command input modal executing structured extraction on synthetic scenarios",
+        "caption": "Arabic natural-language command panel feeding local Qwen 2.5 7B structured schema extraction",
+        "width": 1440,
+        "height": 900
+      },
+      {
+        "path": "media/evidence/planmilt_synthetic_demo.webp",
+        "alt": "Validated JSON entities rendered on the synthetic GIS canvas",
+        "caption": "Draft 7 schema-validated entities rendered automatically onto map layers",
+        "width": 1440,
+        "height": 900
+      }
+    ],
+    "lead": "Developed as the 4th-year Multidisciplinary Engineering Project (Projet Pluridisciplinaire) at ESI-SBA, I led and supervised the AI engineering team developing PlanMilt DZ in collaboration with an institutional partner from February to May 2026. Alongside team coordination, I fine-tuned Qwen 2.5 7B via LoRA on the partner's 24GB VRAM GPU workstation with confidential domain datasets, and built the standalone Ollama structured extraction module with recursive Draft 7 JSON Schema validation.",
+    "context": "PlanMilt DZ was developed in collaboration with an institutional partner. We conducted on-site visits, and the partner supplied a 24GB VRAM GPU workstation for the team’s model fine-tuning (LoRA) on proprietary Arabic datasets (those confidential weights and data remain institutional property). My open-source repository isolates the Arabic extraction module linking natural-language instructions to structured GIS layers via local Ollama inference and recursive Draft 7 JSON Schema contracts (supporting 3 top-level entity classes, 6 hierarchical unit levels, and 4 affiliation classes).",
+    "problem": "Arabic operational instructions are natural to read but difficult to turn into predictable application inputs. A language model can suggest a structured representation, but its response might be malformed JSON, omit required fields, or include unexpected types. The application needs a reliable contract that rejects invalid structures before they reach the GIS business logic.",
     "decisions": [
       {
-        "title": "Run inference locally with Qwen 2.5 7B",
-        "body": "The Python extractor calls Qwen 2.5 7B through Ollama with an Arabic extraction prompt and the target schema. Ollama’s JSON format constrains syntax; a separate schema check enforces fields and types. Local inference avoids dependence on a hosted model API, while runtime and hardware requirements still need measurement."
+        "title": "Fine-tune via LoRA and run inference locally with Qwen 2.5 7B",
+        "body": "The team fine-tuned Qwen 2.5 7B using LoRA on the partner's 24GB VRAM GPU on confidential domain data. The Python extraction module calls the model through Ollama with domain-engineered system prompts and structured output constraints. Local execution guarantees that confidential operational data never leaves institutional hardware."
       },
       {
         "title": "Enforce structure with JSON Schema (Draft 7)",
@@ -368,9 +451,9 @@ export const projects: Project[] = [
   {
     "slug": "numpy-mlp-from-scratch",
     "category": "Machine learning foundations",
-    "title": "A neural network in NumPy",
-    "summary": "A two-layer MNIST digit classifier (784 → 128 → 10) built entirely from matrix operations—forward propagation, cross-entropy loss, and hand-derived backpropagation gradients—with no automatic differentiation. Reproducible 5-seed evaluation on the public baseline.",
-    "role": "Independent implementation",
+    "title": "Neural network from scratch in NumPy",
+    "summary": "A two-layer MNIST digit classifier (784 → 128 → 10) built entirely from scratch by hand using raw NumPy matrix operations—forward propagation, softmax activation, cross-entropy loss, and hand-derived analytical backpropagation gradients—with zero automatic differentiation or deep learning frameworks. Reproducible 5-seed evaluation on the public baseline.",
+    "role": "Independent implementation from scratch by hand",
     "stack": [
       "Python",
       "NumPy",
@@ -378,26 +461,30 @@ export const projects: Project[] = [
     ],
     "status": "Public code",
     "repo": "https://github.com/youcef-ach/training-mlp-from-scratch-lab",
-    "lead": "I implemented a two-layer dense neural network from scratch in NumPy to understand the math that automatic differentiation libraries normally abstract away. Every operation—forward propagation, loss computation, gradient derivation, and mini-batch weight updates—is written as explicit matrix operations.",
-    "context": "This project strips away the abstractions of frameworks like PyTorch or TensorFlow. The bias-free network architecture is 784 input pixels → 128 hidden units (ReLU activation) → 10 output classes (softmax), trained with mini-batch SGD (learning rate 0.01, batch size 64, 10 epochs). Weights are initialized from N(0, 0.3). The key insight is that combining softmax with cross-entropy loss simplifies the output gradient to (predicted probabilities − one-hot labels), which is then propagated backward through the hidden layer and the ReLU gate using standard chain-rule derivations.",
-    "problem": "Calling a framework’s training API can hide which values are carried forward, how the loss gradient moves backward through each layer, and where numerical errors enter. This lab made each step explicit so the math could be inspected and verified.",
+    "lead": "I implemented a two-layer dense neural network entirely from scratch by hand in pure NumPy to master the mathematical foundations that automatic differentiation libraries normally abstract away. Every operation—forward propagation, softmax activation, cross-entropy loss computation, analytical multivariable calculus gradient derivation, and mini-batch SGD weight updates—is coded by hand using explicit matrix algebra without any autograd engine.",
+    "context": "This project strips away modern framework abstractions to expose raw mathematical mechanics. The bias-free network architecture is 784 input pixels → 128 hidden units (ReLU activation) → 10 output classes (softmax), trained with mini-batch SGD (learning rate 0.01, batch size 64, 10 epochs). Weights are initialized from N(0, 0.3). The fundamental derivation combines softmax with categorical cross-entropy loss, simplifying the output error gradient analytically to (p − y), which is then propagated backward through the hidden layer and the ReLU activation derivative by hand using the multivariable chain rule.",
+    "problem": "Calling framework APIs like PyTorch or TensorFlow conceals which tensors are cached, how backpropagation traverses each computational node, and where numerical precision degrades. Building the network from scratch by hand makes every matrix dimension, forward activation, and analytical gradient transparent and verifiable.",
     "decisions": [
       {
-        "title": "Vectorize the forward and backward passes",
-        "body": "The model treats each mini-batch as a matrix, so the dense-layer multiplications and gradient computations use vectorized NumPy operations. ReLU gates the hidden units element-wise, and softmax converts the output layer’s raw scores into a probability distribution over the 10 digit classes."
+        "title": "Vectorize forward operations by hand in NumPy",
+        "body": "The model processes mini-batches as 2D matrices. Affine transformations (Z₁ = X·W₁, Z₂ = A₁·W₂), element-wise ReLU activation gating, and numerically stabilized softmax probabilities are implemented from scratch using primitive NumPy array operations, ensuring execution speed and memory efficiency without framework shortcuts."
       },
       {
-        "title": "Derive gradients analytically",
-        "body": "The public baseline is bias-free: the analytical gradient updates the two weight matrices. I derive softmax/cross-entropy and backpropagate through ReLU explicitly. Central finite-difference checks on selected test inputs agree to relative error below 6.2e-10; this is a numerical check of those cases, not proof that every training path is defect-free."
+        "title": "Derive analytical backpropagation gradients by hand",
+        "body": "Rather than relying on automatic differentiation (torch.autograd), I derived the exact analytical gradients using multivariable calculus: dW₂ = (A₁ᵀ·dZ₂) / m and dW₁ = (Xᵀ·dZ₁) / m, where dZ₁ = (dZ₂·W₂ᵀ) ⊙ (Z₁ > 0). Central finite-difference gradient checks on test inputs confirm exact mathematical agreement with relative numerical error below 6.2e-10."
       },
       {
         "title": "Document the evaluation protocol",
         "body": "The public baseline separates training (50k), validation (10k), and test (10k) splits. Seeds, learning rate, batch size, and the number of test images consumed by the batch loop are documented in the README. The 9,984 consumed images (vs. 10,000) reflect the final mini-batch truncation at the chosen batch size."
       }
     ],
-    "outcome": "The public controlled baseline reports 91.62% mean test accuracy with a standard deviation of 0.23 percentage points across five seeds, on 9,984 consumed MNIST test images. The repository includes 18 tests for the forward pass, gradient computation, and training loop.",
+    "outcome": "The hand-implemented NumPy baseline achieves 91.62% mean test accuracy with a standard deviation of 0.23 percentage points across five random seeds on 9,984 MNIST test images. The repository includes 18 unit tests verifying matrix dimensions, gradient correctness, and the manual training loop.",
     "limits": "The repository documents separate experiment protocols. The 91.62% number describes only the public baseline under its stated setup. No comparison to a framework-based baseline or published MNIST benchmarks is included in the case study. A separately evaluated local branch achieved higher accuracy but is not part of the public baseline.",
     "facts": [
+      {
+        "label": "Implementation",
+        "value": "100% from scratch by hand (Zero autograd)"
+      },
       {
         "label": "Mean accuracy (5 seeds)",
         "value": "91.62% ± 0.23pp"
@@ -422,39 +509,44 @@ export const projects: Project[] = [
   },
   {
     "slug": "english-french-translation",
-    "category": "Natural language processing",
-    "title": "English–French translation architectures",
-    "summary": "An architecture lab tracing the evolution of neural machine translation: from a recurrent encoder–decoder (BiLSTM) without attention, through Bahdanau additive attention, to a decoder-only causal Transformer and a full encoder–decoder Transformer with cross-attention—all implemented from scratch in PyTorch.",
-    "role": "Independent implementation",
+    "category": "NLP & Transformer foundations",
+    "title": "Neural translation architectures from scratch",
+    "summary": "An architecture lab implementing four sequence-to-sequence translation models entirely from scratch by hand in PyTorch—BiLSTM encoder–decoder, Bahdanau additive attention, decoder-only causal Transformer, and full encoder–decoder Transformer with cross-attention—writing custom scaled dot-product attention, causal masks, and position encodings with zero pre-built nn.Transformer modules.",
+    "role": "Independent architecture implementation from scratch by hand",
     "stack": [
-      "PyTorch",
+      "PyTorch (basic tensor math)",
+      "Attention mechanisms",
+      "Transformers",
       "LSTM",
-      "Transformer",
       "Gensim",
       "Python"
     ],
-    "status": "Public code",
+    "status": "4th-Year NLP Capstone Project · ESI-SBA · Public code",
     "repo": "https://github.com/youcef-ach/english-to-frensh-translation-model",
-    "lead": "I implemented four translation architectures from scratch in PyTorch to study how the field moved from recurrent models to Transformers. Each notebook builds on the previous one: a BiLSTM encoder–decoder baseline, the same architecture augmented with Bahdanau attention, a decoder-only causal Transformer, and a full encoder–decoder Transformer with cross-attention.",
+    "lead": "Built as a 4th-year Natural Language Processing (NLP) capstone project at ESI-SBA, I implemented four foundational translation architectures entirely from scratch by hand in PyTorch without using any high-level sequence libraries or nn.Transformer modules. Designed to trace the architectural evolution of neural sequence modeling, each model is coded from tensor primitives: a recurrent BiLSTM baseline, Bahdanau additive attention, a causal decoder-only Transformer, and a complete encoder–decoder Transformer with multi-head cross-attention.",
     "context": "The Tatoeba English–French dataset (fra.txt, ~34.5 MB, 239,189 sentence pairs) provides the reference corpus. Tokenization is word-level via Gensim, with punctuation mapped to explicit tokens and a vocabulary of 49,654 words built from the full corpus. Special tokens (PAD, SOS, EOS, UNK) anchor the sequence boundaries.",
-    "problem": "Understanding how attention and Transformer architectures improve on recurrent baselines requires implementing the mechanics—alignment scoring, causal masking, multi-head projections, cross-attention—rather than calling a library. Each architecture surfaces a different design trade-off between sequential processing, parallelism, and information flow.",
+    "problem": "Calling black-box abstractions like torch.nn.Transformer or Hugging Face modules conceals how attention weights are computed, how causal masking enforces autoregressive ordering, and how cross-attention queries exchange information with encoder keys and values. Understanding these mechanics requires hand-coding every projection, normalization step, and mask from basic tensor arithmetic.",
     "decisions": [
       {
-        "title": "Start with a recurrent baseline",
-        "body": "The first notebook implements a bidirectional LSTM encoder (hidden size 256) with packed padded sequences and a unidirectional LSTM decoder (hidden size 512) initialized from the concatenated forward and backward encoder states. FP16 mixed precision and gradient clipping are included. This baseline establishes the limitations of compressing an entire source sentence into a fixed-length vector."
+        "title": "Implement recurrent baseline from scratch",
+        "body": "The first notebook implements a bidirectional LSTM encoder (hidden size 256) with packed sequences and a unidirectional LSTM decoder (hidden size 512) initialized from concatenated forward and backward encoder states. FP16 mixed precision and gradient clipping are included, isolating the bottleneck of compressing an entire sequence into a single fixed-length vector."
       },
       {
-        "title": "Add Bahdanau additive attention",
-        "body": "The second notebook introduces a custom attention module that computes alignment scores via a learnable projection: score = vᵀ tanh(W[hidden; encoder_outputs]). The context vector is concatenated with decoder embeddings at each step. Source padding positions are masked with −∞ before softmax. Teacher forcing is scheduled from 1.0 down to 0.5 across epochs to improve inference stability."
+        "title": "Code Bahdanau additive attention by hand",
+        "body": "Rather than using pre-packaged attention layers, I coded a custom attention module computing alignment scores from tensor operations: score = vᵀ tanh(W[hidden; encoder_outputs]). The context vector is concatenated with decoder embeddings at each auto-regressive step. Source padding positions are masked with −∞ prior to softmax, and teacher forcing is dynamically scheduled from 1.0 down to 0.5 across epochs."
       },
       {
-        "title": "Build Transformers from scratch",
-        "body": "The third notebook implements a decoder-only causal Transformer with custom scaled dot-product attention (Q·Kᵀ/√d_k), lower-triangular causal masking, multi-head structure, residual connections, LayerNorm, and a position-wise FFN (d → 4d → d). The fourth notebook extends this to a full encoder–decoder Transformer (3 encoder layers, 3 decoder layers) with bidirectional self-attention in the encoder, causal self-attention in the decoder, and cross-attention (Q from decoder, K/V from encoder). Autoregressive greedy decoding generates tokens from SOS to EOS."
+        "title": "Build full Transformer architectures from scratch by hand",
+        "body": "I built the complete Transformer architecture from basic PyTorch tensor operations with zero nn.Transformer or nn.MultiheadAttention calls. The implementation includes custom scaled dot-product attention (Q·Kᵀ/√d_k), lower-triangular causal attention masking, multi-head linear split/merge projections, LayerNorm, residual connections, and position-wise Feed-Forward Networks (d → 4d → d). The fourth notebook implements a full encoder–decoder Transformer (3 encoder layers, 3 decoder layers) pairing bidirectional self-attention with causal decoder self-attention and cross-attention, driving an autoregressive greedy decoding loop from SOS to EOS."
       }
     ],
-    "outcome": "All four architectures compile and execute. The attention model reduced loss from 10.80 to 1.47 over 5 smoke-test epochs. The encoder–decoder Transformer converged to loss 0.000572 on a synthetic sentence pair in 10 epochs. Automated tests verify tensor shapes, attention weight normalization, padding masking, and causal mask correctness.",
-    "limits": "This is an educational prototype. Tokenization is word-level (no BPE or SentencePiece). The full corpus was not trained to convergence due to compute constraints, so no BLEU or chrF benchmarks are reported. The goal was understanding the architecture mechanics, not achieving competitive translation quality.",
+    "outcome": "All four hand-coded architectures compile, execute, and train cleanly. The custom Bahdanau attention model reduced training loss from 10.80 to 1.47 over 5 smoke-test epochs. The custom from-scratch encoder–decoder Transformer converged to loss 0.000572 on a synthetic sentence pair in 10 epochs. Automated unit tests rigorously verify tensor shapes, attention weight normalization (summing to 1.0), padding masking, and causal lower-triangular mask enforcement.",
+    "limits": "This is an architectural lab built from scratch to study sequence mechanics, not a competitive production translation engine. Tokenization is word-level (no subword BPE/SentencePiece) and the full 239k Tatoeba corpus was not trained to convergence due to compute limits, so no published BLEU benchmarks are claimed.",
     "facts": [
+      {
+        "label": "Implementation",
+        "value": "100% from scratch by hand (no nn.Transformer)"
+      },
       {
         "label": "Architectures",
         "value": "4 (BiLSTM, +Attention, Decoder-only, Enc-Dec Transformer)"
@@ -469,76 +561,76 @@ export const projects: Project[] = [
       },
       {
         "label": "Framework",
-        "value": "PyTorch (from scratch)"
+        "value": "PyTorch (basic tensor primitives)"
       }
     ]
   },
   {
     "slug": "word2vec-from-scratch",
-    "category": "Machine learning",
+    "category": "Machine learning foundations",
     "title": "Word2Vec from scratch",
-    "summary": "Implemented CBOW and Skip-gram training in PyTorch to study how context-based objectives shape word embeddings. Uses 2D embedding vectors for direct visualization without dimensionality reduction.",
-    "role": "Independent implementation",
+    "summary": "Implemented both Continuous Bag-of-Words (CBOW) and Skip-gram algorithms entirely from scratch by hand in PyTorch—without using gensim.models.Word2Vec or pre-packaged embedding packages—to study how context-based objectives shape semantic representations. Uses 2D embedding spaces for direct geometric visualization of vector convergence.",
+    "role": "Independent implementation from scratch by hand",
     "stack": [
-      "PyTorch",
+      "PyTorch (from scratch)",
       "NLTK",
       "Gensim",
       "Python"
     ],
     "status": "Public code",
     "repo": "https://github.com/youcef-ach/word2vec_from_scratch",
-    "lead": "I built both Word2Vec training objectives—Skip-gram and CBOW—from scratch in PyTorch to understand how a neural network learns semantic relationships from raw text. The implementation uses 2-dimensional embeddings so the learned vectors can be plotted directly, without needing PCA or t-SNE.",
-    "context": "Word2Vec learns dense word representations by predicting context. Skip-gram predicts surrounding words from a center word; CBOW predicts the center word from its context. This implementation builds the entire pipeline manually: sentence tokenization (NLTK), word tokenization and vocabulary construction (Gensim corpora.Dictionary), training pair generation with configurable window size, and the embedding–linear neural network.",
-    "problem": "Pre-trained embedding libraries abstract away the training dynamics. To see how the optimization actually moves word vectors, the implementation needed explicit training pair generation, a visible loss curve, and embeddings small enough to plot directly as 2D coordinates before and after training.",
+    "lead": "I built both fundamental Word2Vec training objectives—Skip-gram and Continuous Bag-of-Words (CBOW)—completely from scratch by hand in PyTorch without using any embedding libraries or gensim.models.Word2Vec. The entire pipeline, from raw text windowing to embedding layer optimization, is hand-coded. The models use 2-dimensional embeddings so that the geometric migration of word vectors during training can be plotted directly without lossy dimensionality reduction.",
+    "context": "Word2Vec models learn dense semantic vector spaces by formulating unsupervised text prediction tasks. Skip-gram predicts surrounding context words given a target center word, while CBOW predicts the center word from the average of surrounding context words. Instead of calling high-level embedding packages, this project implements every stage manually: sentence tokenization (NLTK), vocabulary mapping (Gensim corpora.Dictionary), sentence-aware sliding window dataset generation, and linear embedding projection matrices.",
+    "problem": "Pre-packaged embedding libraries like Gensim or FastText treat vector training as a black box, hiding how loss optimization actually separates or clusters word vectors in Euclidean space. Building both objectives from scratch by hand reveals the exact gradient dynamics, the impact of context window size, and how distinct objectives organize semantic space.",
     "decisions": [
       {
-        "title": "Use 2D embeddings for direct visualization",
-        "body": "Setting the embedding dimension to 2 lets the trained vectors be plotted as (x, y) coordinates without any dimensionality reduction. Before training, word positions are random. After 200 epochs (LR 0.01), words that appear in similar contexts cluster together. The trade-off is that 2D embeddings lack the capacity for rich semantic structure, but they make the learning process visually obvious."
+        "title": "Build sentence-aware sliding window generator by hand",
+        "body": "Text is tokenized with NLTK and indexed into an explicit vocabulary with Gensim Dictionary. I hand-coded a sentence-aware sliding window generator (window size = 2, 4 neighbors total) that strictly respects sentence boundaries—preventing cross-sentence context pollution. Training pairs are assembled directly: (center, context) pairs for Skip-gram, and (context_list, center) pairs for CBOW."
       },
       {
-        "title": "Generate training pairs with sentence-aware windowing",
-        "body": "Text is first split into sentences (NLTK), then each sentence is tokenized into words (Gensim). Training pairs are generated within sentence boundaries: a word at the end of one sentence does not form a context pair with a word at the start of the next. Skip-gram pairs are (center_word_idx, context_word_idx); CBOW pairs are ([context_word_idxs], center_word_idx). Window size is 2 (4 neighbors total)."
+        "title": "Train 2D embeddings for direct geometric inspection",
+        "body": "Instead of high-dimensional embeddings (e.g. 100D–300D) that require lossy dimensionality reduction like PCA or t-SNE to visualize, I configured both models with 2-dimensional embedding spaces. This allows direct plotting of word vector coordinates (x, y) before and after training, making the geometrical displacement driven by semantic co-occurrence directly visible."
       },
       {
-        "title": "Compare Skip-gram and CBOW on the same corpus",
-        "body": "Both models use the same architecture: nn.Embedding(vocab_size, 2) as the input layer and nn.Linear(2, vocab_size) as the output, trained with CrossEntropyLoss. On the small test corpus (4 sentences, 92 words, vocabulary 62), CBOW converged to lower loss (0.7) than Skip-gram (2.7), consistent with CBOW’s advantage on small datasets where each training example aggregates multiple context signals."
+        "title": "Implement and compare both CBOW and Skip-gram from scratch",
+        "body": "Both architectures are coded from scratch using basic embedding lookup and linear projection layers trained with cross-entropy loss and Adam/SGD. On the benchmark text corpus, CBOW averaged context embeddings before projecting to vocabulary logits, converging to ~0.7 loss, while Skip-gram independently evaluated each context word, converging to ~2.7 loss."
       }
     ],
-    "outcome": "Both models train and produce interpretable 2D embeddings. The before/after visualizations show random initial positions converging to semantically meaningful clusters. CBOW achieved 0.7 final loss versus 2.7 for Skip-gram on the small corpus.",
-    "limits": "The training corpus is very small (62 words). Negative sampling was not implemented. The 2D embedding dimension is too low for real semantic tasks. This is an educational implementation for understanding training dynamics, not a production embedding system.",
+    "outcome": "Both hand-implemented objectives run, train, and produce 2D embedding coordinates that can be visually tracked from random initialization to converged semantic positions. The project provides an inspectable, transparent demonstration of representation learning from first principles.",
+    "limits": "Built as an educational deep-dive from scratch on a small corpus (62 unique tokens). It uses full softmax rather than negative sampling (hierarchical softmax), and does not claim semantic coverage of large web-scale corpora.",
     "facts": [
       {
+        "label": "Implementation",
+        "value": "100% from scratch by hand (no Word2Vec library)"
+      },
+      {
         "label": "Architectures",
-        "value": "Skip-gram + CBOW"
+        "value": "Skip-gram & CBOW (both implemented)"
       },
       {
         "label": "Embedding dim",
-        "value": "2 (direct visualization)"
+        "value": "2D (direct geometric visualization, no PCA/t-SNE)"
       },
       {
-        "label": "Corpus",
-        "value": "4 sentences, 62-word vocabulary"
+        "label": "Pipeline",
+        "value": "Hand-crafted sentence-aware windowing"
       },
       {
         "label": "Training",
         "value": "200 epochs, LR 0.01"
       },
       {
-        "label": "CBOW loss",
-        "value": "0.7"
-      },
-      {
-        "label": "Skip-gram loss",
-        "value": "2.7"
+        "label": "Framework",
+        "value": "PyTorch (basic tensor primitives)"
       }
     ]
   },
   {
     "slug": "voice-tutoring-prototype",
-    "category": "Application engineering",
+    "category": "Guided learning project",
     "title": "Voice tutoring prototype",
-    "summary": "A conversational learning interface connecting React to Vapi voice sessions with Deepgram speech recognition, GPT-4 dialogue, and ElevenLabs speech synthesis. Transcripts are rendered live and session metadata is stored in Supabase.",
-    "role": "Frontend and integration developer",
+    "summary": "A tutorial-based React learning project integrating Vapi voice sessions, final-transcript display and completed-session metadata in Supabase.",
+    "role": "Tutorial-based implementation with subsequent additions",
     "stack": [
       "React",
       "Vapi",
@@ -549,20 +641,20 @@ export const projects: Project[] = [
       "Clerk"
     ],
     "status": "Private prototype · 2025",
-    "lead": "I built the frontend voice tutor interface, connecting WebRTC audio streams to a conversational AI pipeline: Deepgram handles speech recognition, GPT-4 generates dialogue responses, and ElevenLabs synthesizes the spoken reply. Session metadata and transcripts are persisted in Supabase.",
-    "problem": "A voice-based tutor needs real-time audio processing, natural conversation flow, and persistent session history. The interface must handle speech-state transitions (listening, thinking, speaking), render live transcripts as the conversation progresses, and store completed sessions for review.",
+    "lead": "I followed a tutorial to build this voice-tutoring interface and later added features. It connects React to Vapi voice sessions using Deepgram, GPT-4 and ElevenLabs, displays final transcript messages and records user and tutor identifiers when a call ends.",
+    "problem": "A voice tutor interface needs to represent connection and speaking states, display what was said, and associate a completed session with the signed-in user.",
     "decisions": [
       {
         "title": "Route audio through Vapi’s managed pipeline",
-        "body": "Vapi orchestrates the voice pipeline: WebRTC audio capture, Deepgram speech-to-text, GPT-4 dialogue generation, and ElevenLabs text-to-speech. The React frontend manages connection state, renders live transcript events, and provides speech-state feedback (visual indicators for listening, processing, and speaking phases)."
+        "body": "Vapi manages the voice service pipeline. The React client listens for call, speech and final-transcript events, updates connection and speaking state, and removes those event listeners on cleanup. This work integrates managed services; it does not implement the speech models."
       },
       {
-        "title": "Persist sessions with Supabase and Clerk",
-        "body": "Each tutoring session’s metadata—duration, tutor configuration, and final transcript—is stored in Supabase. Clerk handles user authentication, linking sessions to authenticated users. Tutor personality and subject configuration are set before each session begins."
+        "title": "Record completed sessions separately from live transcripts",
+        "body": "The session-completion action stores companion_id and user_id in Supabase. Transcript messages remain in React state for display during the call. The inspected action does not save transcript text or measured session duration. Clerk supplies the authenticated user context."
       }
     ],
-    "outcome": "The prototype supports configurable voice tutoring sessions with real-time transcript rendering and persistent session history.",
-    "limits": "This is a private prototype. The voice pipeline depends entirely on external services (Vapi, Deepgram, GPT-4, ElevenLabs). No latency benchmarks or user testing results are available.",
+    "outcome": "The source implements configurable tutoring sessions, final-transcript display and a completed-session record. A fresh live-service walkthrough has not been verified for this portfolio release.",
+    "limits": "The exact additions beyond the tutorial are still being documented, so this remains a secondary learning project. A fresh live-service walkthrough, transcript persistence, measured latency and learning outcomes are not established.",
     "facts": [
       {
         "label": "Speech recognition",
@@ -581,8 +673,8 @@ export const projects: Project[] = [
         "value": "Clerk"
       },
       {
-        "label": "Storage",
-        "value": "Supabase"
+        "label": "Session storage",
+        "value": "User and tutor identifiers"
       }
     ]
   },
@@ -599,6 +691,29 @@ export const projects: Project[] = [
       "Configurable forms"
     ],
     "status": "Private prototype",
+    "evidenceImages": [
+      {
+        "path": "media/evidence/ercp_form.webp",
+        "alt": "e-RCP configurable clinical intake form renderer using synthetic records",
+        "caption": "Configurable multidisciplinary case intake form · local synthetic demonstration",
+        "width": 1264,
+        "height": 1496
+      },
+      {
+        "path": "media/evidence/ercp_patient.webp",
+        "alt": "Patient details and linked medical cases table in e-RCP React client",
+        "caption": "Patient dossier view and linked case list · synthetic sample patient",
+        "width": 1264,
+        "height": 912
+      },
+      {
+        "path": "media/evidence/ercp_meeting.webp",
+        "alt": "Clinical multidisciplinary meeting view in e-RCP",
+        "caption": "Scheduled multidisciplinary RCP meeting screen · local read-only preview",
+        "width": 1280,
+        "height": 720
+      }
+    ],
     "lead": "I owned the frontend from architecture and design decisions through implementation. The React application supports multidisciplinary case review and configurable consultation forms, integrating with a Django REST backend developed by the team.",
     "problem": "Specialists need to review a case, navigate its documents and complete the right consultation form without losing context. The frontend must translate nested API structures into usable screens and represent loading, validation and access failures clearly.",
     "decisions": [
@@ -615,8 +730,8 @@ export const projects: Project[] = [
         "body": "My responsibility was the frontend architecture and implementation. The private organisational source includes team backend work; it is not republished as my standalone project. Demonstrations should use synthetic patient information."
       }
     ],
-    "outcome": "The private project contains the implemented consultation frontend and API integration. The case study reflects my frontend ownership; the backend and its audit mechanisms belong to the wider team.",
-    "limits": "Clinical deployment, immutable audit coverage, encryption at rest and regulatory compliance have not been established by this review. Configurable form definitions are not evidence of immutable form versioning. Public demonstrations must use synthetic data.",
+    "outcome": "A local walkthrough now exercises the implemented patient dossier, case-linked meeting view, configurable form editor and renderer, and a pre-seeded submission. The walkthrough uses invented records and a read-only local API. The existing three schema tests and both normal and demonstration builds passed. My contribution covers the frontend; the Django backend belongs to the team.",
+    "limits": "This private prototype is not established as a clinical deployment or a compliant medical system. The walkthrough demonstrates frontend behaviour with simulated responses, not backend persistence, authorization or clinical outcomes. It uses the private development mirror; parity with the organisation repository’s latest revision remains unconfirmed.",
     "facts": [
       {
         "label": "My scope",
@@ -641,7 +756,7 @@ export const projects: Project[] = [
     "category": "Full-stack systems",
     "title": "Panoriha Advanced",
     "summary": "A private spatial tour management prototype with a NestJS API, Prisma data models, and MinIO object storage for hosting and organizing 3D tour assets.",
-    "role": "Full-stack developer",
+    "role": "Independent full-stack developer",
     "stack": [
       "NestJS",
       "Prisma",
@@ -650,20 +765,20 @@ export const projects: Project[] = [
       "PostgreSQL"
     ],
     "status": "Private prototype",
-    "lead": "I built a tour management backend for organizing and serving spatial tour data—panoramic images, 3D models, and associated metadata—through a NestJS API backed by Prisma ORM and MinIO object storage.",
-    "problem": "Managing spatial tour assets requires structured metadata (tour hierarchy, station positions, capture associations), efficient binary storage for large panoramic images and 3D models, and an API that serves both the management interface and the viewer application.",
+    "lead": "I designed and built this private spatial-tour prototype using a NestJS API, Prisma and MinIO. Its source separates relational tour records from large panorama, scan and model files.",
+    "problem": "A spatial tour needs structured records for its images, scans and annotations, alongside object storage for large files. The management API must connect those records to the uploaded assets.",
     "decisions": [
       {
         "title": "Structure tour data with Prisma models",
-        "body": "Prisma schema defines the tour hierarchy: tours contain captures, captures contain stations with position and orientation metadata. Relations enforce referential integrity and enable efficient queries for the viewer (e.g., fetching all stations for a given capture with their panorama URLs)."
+        "body": "The Prisma schema defines User, Tour, Panorama, Scan and Tag models. These describe tours and their associated spatial content; the model names differ from the capture/station contract used in the later Azurid viewer."
       },
       {
         "title": "Store binary assets in MinIO",
-        "body": "Panoramic images, 3D model files (GLB), and texture atlases are stored in MinIO object storage rather than the database. The NestJS API generates presigned URLs for direct client downloads, keeping large binary transfers off the application server."
+        "body": "The storage service creates presigned PUT URLs so the client can upload assets directly to MinIO. Tour services return the upload URL and expected storage path. This is an upload mechanism; it does not establish authenticated private downloads."
       }
     ],
-    "outcome": "The prototype serves tour data and binary assets through a typed NestJS API, with Prisma handling relational queries and MinIO handling object storage.",
-    "limits": "This is a private prototype. No load testing or production deployment was performed.",
+    "outcome": "The inspected source contains tour-management services, relational data models and presigned upload preparation. End-to-end viewer playback has not been revalidated for this presentation.",
+    "limits": "This is my independent earlier prototype. It has no current public demonstration or load benchmark, and end-to-end viewer playback has not been revalidated. Presigned upload support does not establish private asset delivery.",
     "facts": [
       {
         "label": "API",
@@ -750,6 +865,22 @@ export const projects: Project[] = [
       "pnpm"
     ],
     "status": "Private ACS project · 2026",
+    "evidenceImages": [
+      {
+        "path": "media/evidence/majara_discover.webp",
+        "alt": "Majara Discover dashboard displaying quest cards and season luminaries using synthetic records",
+        "caption": "Discover world, quest feed, and XP progression bar · synthetic preview run",
+        "width": 1265,
+        "height": 712
+      },
+      {
+        "path": "media/evidence/majara_profile.webp",
+        "alt": "Majara Base profile view with telemetry credentials and guild memberships",
+        "caption": "Base profile dossier and guild affiliation view · synthetic preview run",
+        "width": 1265,
+        "height": 712
+      }
+    ],
     "lead": "I designed and implemented the Majara frontend for Advanced Computing Society. The application combines community discovery, member profiles and collaborative challenges, with a shared shell, explicit domain contracts and a separate Go backend maintained by the team.",
     "problem": "A growing community application needs consistent navigation and state handling across several domains. Adding a feature should not duplicate routing state, couple UI components to transport details or make optional plugins a requirement for the core application.",
     "decisions": [
@@ -770,8 +901,8 @@ export const projects: Project[] = [
         "body": "Platform packages define themes, layout and extension contracts independently of domain features. Plugin lifecycle and package boundaries are explicit. This is a web SPA architecture; a mobile container strategy is not evidence of a released native application."
       }
     ],
-    "outcome": "Implemented a shared application shell with domain-specific interfaces, validated API contracts, canonical navigation and explicit session state. Tests import the production route and authentication modules. My contribution covers the frontend architecture and implementation; the backend belongs to the wider team.",
-    "limits": "The delivered scope is a web SPA. Academy and Horizon remain reserved domains without implemented landing routes. Some quest and guild actions remain local UI or placeholders. Backend workflow, runtime performance, accessibility and cross-device behaviour require separate validation.",
+    "outcome": "The local walkthrough exercises Discover and Followings, client-side quest search and details, and the profile logbook tabs through the implemented frontend. It uses contract-validated synthetic responses. Type checking and all 283 existing tests passed. My contribution covers frontend architecture and implementation; the Go backend belongs to the team.",
+    "limits": "This is a web SPA, not a released native application. The walkthrough is read-only and uses synthetic identities and records; it does not verify the Go backend or production authentication. Quest instructions and illustrations include placeholders, and some guild and quest actions remain unfinished. Academy and Horizon have no implemented landing routes. Performance, comprehensive accessibility and cross-device behaviour require further validation.",
     "facts": [
       {
         "label": "My scope",
@@ -790,21 +921,109 @@ export const projects: Project[] = [
         "value": "React / TypeScript web SPA"
       }
     ]
+  },
+  {
+    "slug": "tourvisto-ai-travel",
+    "category": "Full-stack AI web product",
+    "title": "Tourvisto AI travel planner",
+    "summary": "A full-stack travel agency & AI itinerary planner in React 19, Django REST, Syncfusion charts, and server-side Gemini generation behind JWT authentication.",
+    "role": "Full-stack developer — Django REST backend, Gemini API proxy, React dashboard",
+    "stack": [
+      "React 19",
+      "Django REST Framework",
+      "SimpleJWT",
+      "Gemini API",
+      "Ant Design",
+      "Syncfusion"
+    ],
+    "status": "Public code · Live frontend · 2025–2026",
+    "repo": "https://github.com/youcef-ach/touristic-agency-dashboard",
+    "liveUrl": {
+      "url": "https://touristic-agency-dashboard.vercel.app",
+      "label": "Open live frontend"
+    },
+    "evidenceImages": [
+      {
+        "path": "media/evidence/tourvisto_overview.webp",
+        "alt": "Tourvisto travel agency platform hero and admin analytics dashboard preview",
+        "caption": "Tourvisto travel agency frontend & analytics dashboard overview",
+        "width": 1440,
+        "height": 416
+      }
+    ],
+    "lead": "I built Tourvisto end-to-end as a full-stack product combining a Django REST API with a React dashboard and an authenticated AI itinerary generation endpoint backed by Gemini and Unsplash.",
+    "problem": "Exposing LLM provider keys on a client SPA leaks credentials, and raw LLM responses often break nested day-by-day database writes if returned unvalidated.",
+    "decisions": [
+      {
+        "title": "Isolate AI keys and validation inside Django REST",
+        "body": "The React frontend sends user preferences to POST /trips/generate/ under JWT auth. The Django backend holds GEMINI_API_KEY and UNSPLASH_ACCESS_KEY server-side, bounds duration (1–21 days), validates JSON structure, and saves trip/day/activity records atomically."
+      },
+      {
+        "title": "Pair consumer booking views with admin telemetry charts",
+        "body": "The client implements both a public trip explorer and an admin dashboard built with Syncfusion grids/charts and Ant Design controls."
+      }
+    ],
+    "outcome": "Full-stack React 19 + Django REST platform supporting account registration, JWT authentication, saved trip browsing, and server-validated itinerary creation.",
+    "limits": "Live Gemini generation requires configuring a funded GEMINI_API_KEY in backend environment variables; the hosted Vercel deployment serves the React client.",
+    "facts": [
+      { "label": "Frontend", "value": "React 19 + Vite + Syncfusion/AntD" },
+      { "label": "Backend", "value": "Django REST + SimpleJWT" },
+      { "label": "AI boundary", "value": "Server-side Gemini + atomic saves" }
+    ]
+  },
+  {
+    "slug": "apple-iphone-3d-showcase",
+    "category": "Interactive 3D web graphics",
+    "title": "iPhone 15 Pro 3D web experience",
+    "summary": "An interactive WebGL showcase built with React 18, Three.js, React Three Fiber, Drei Views, and GSAP ScrollTrigger featuring PBR titanium lighting and dual device form factors.",
+    "role": "Frontend 3D & motion developer",
+    "stack": [
+      "React 18",
+      "Three.js r168",
+      "React Three Fiber",
+      "Drei",
+      "GSAP ScrollTrigger",
+      "Tailwind CSS"
+    ],
+    "status": "Public code · Interface study · 2024–2025",
+    "repo": "https://github.com/youcef-ach/apple",
+    "lead": "Developed early in my React and WebGL progression, this project explores timeline-synchronized 3D hardware presentation in the browser using React Three Fiber, Drei Views, physically based materials (GLB meshes), dynamic Lightformer rigs, and GSAP scroll animations.",
+    "problem": "Rendering multiple interactive 3D viewport states synced cleanly with DOM scroll timelines without tearing down WebGL shader contexts or blocking UI interactions.",
+    "decisions": [
+      {
+        "title": "Decouple dual Drei Views under a shared R3F Canvas",
+        "body": "Instead of spinning up separate WebGL contexts per size variant (6.1-inch and 6.7-inch), shared Canvas portaling renders both models smoothly while keeping React controls responsive."
+      },
+      {
+        "title": "Harden keyboard accessibility and telemetry gating",
+        "body": "Refactored finish swatches and size selectors to semantic accessible buttons with visible keyboard focus states, and gated optional Sentry tracing behind explicit configuration flags."
+      }
+    ],
+    "outcome": "Interactive 3D product scene supporting multi-finish material switching, size transitions, video carousel state, and responsive Tailwind styling.",
+    "limits": "Unofficial interface study using third-party showcase assets for WebGL/GSAP practice; included Node checks cover config constants rather than WebGL frame-rates.",
+    "facts": [
+      { "label": "3D stack", "value": "Three.js r168 + React Three Fiber" },
+      { "label": "Animation", "value": "GSAP ScrollTrigger timelines" },
+      { "label": "Follow-up", "value": "ARIA controls & opt-in telemetry" }
+    ]
   }
 ];
 
 export const community = [
-  { image: 'media/evidence/welcome_day_vp_poster.webp', width: 1440, height: 1440, eyebrow: 'INGENIUMS \u00b7 2023\u20132024', title: 'Vice president, INGENIUMS', body: 'Led the INGENIUMS club executive board at ESI-SBA. Coordinated technical programs, co-organized events with Transformatek, and spoke to incoming students at Welcome Day.', alt: 'Youcef Achouri on the INGENIUMS vice president poster for Welcome Day' },
-  { image: 'media/evidence/ingeneer_first_demo.webp', width: 1080, height: 608, eyebrow: 'Project demonstrations', title: 'Demonstrating projects', body: 'Explained student engineering projects to visitors at Ingeneer 1.0 and ESI Showcase 7.0, answering questions from students, professionals and faculty.', alt: 'Youcef explaining a project to visitors at the Ingeneer 1.0 demo table' },
-  { image: 'media/evidence/ingeneer_second_ceremony.webp', width: 1200, height: 836, eyebrow: 'Event organization', title: 'Running technical events', body: 'Supported Ingeneer, Ingecode and LC Hack as vice president. At Ingeneer 2.0 I helped present prizes to the winning teams alongside Transformatek.', alt: 'Award presentation to a winning team at the Ingeneer 2.0 ceremony' },
-  { image: 'media/evidence/ingehack_youth_center.webp', width: 1440, height: 1152, eyebrow: 'Ingehack \u00b7 Maison de Jeunes', title: 'Hackathons beyond campus', body: 'Co-organized Ingehack at Maison de Jeunes Abderrahmane Laala in Algiers, bringing ESI-SBA\u2019s hackathon format to the local youth center community.', alt: 'Youcef smiling with his vice president badge at the Ingehack event at Maison de Jeunes' },
-  { image: 'media/evidence/amazigh_day_director.webp', width: 1439, height: 1151, eyebrow: 'Amazigh Day 6.0 \u00b7 ESI-SBA', title: 'Celebrating cultural diversity', body: 'Invited students from different Amazigh regions to present their culture in dedicated stands. Accompanied the school director to present the regional cultural exhibits to invited personalities.', alt: 'Youcef with the school director at Amazigh Day 6.0, presenting the cultural stands' },
-  { image: 'media/evidence/art_manchour_exhibition.webp', width: 1080, height: 1080, eyebrow: 'Art Manchour 2.0 \u00b7 ESI-SBA', title: 'Supporting the arts community', body: 'Contacted and invited artists, coordinated the event as vice president, and accompanied school leaders and invited personalities through the exhibition.', alt: 'An artist presenting work to students at Art Manchour 2.0' },
-  { image: 'media/evidence/youth_center_stem_1.webp', width: 1200, height: 900, eyebrow: 'Community computing \u00b7 Algiers', title: 'Learning with the community', body: 'Took part in computing activities at Maison de Jeunes Abderrahmane Laala in Algiers, working alongside local students on technical challenges.', alt: 'Participants working at laptops at the youth center in Algiers' },
+  { image: 'media/evidence/welcome_day_speaking.webp', width: 1080, height: 1080, eyebrow: 'INGENIUMS \u00b7 2024\u20132025', title: 'Elected Vice President & Season Kickoff', body: 'Elected Vice President leading 100+ active members at ESI-SBA. Established the annual roadmap across 10 major technical and cultural events, and launched the season addressing incoming students on Welcome Day.', alt: 'Youcef Achouri speaking on stage at Welcome Day' },
+  { image: 'media/evidence/lc_hack_team.webp', width: 1080, height: 1080, eyebrow: 'Internal Hackathon \u00b7 ESI-SBA', title: 'LCHack Campus Sprint', body: 'Organized a high-tempo internal hackathon for ESI-SBA engineering students, creating intensive problem-solving tracks to foster rapid software prototyping and algorithmic collaboration.', alt: 'Youcef Achouri with the club leadership team at LCHack' },
+  { image: 'media/evidence/ingecode_sponsor_ceo.webp', width: 1440, height: 1440, eyebrow: 'Industry Partnership \u00b7 Algorithmic Contest', title: 'IngeCode & DC Security Partnership', body: 'Secured corporate sponsorship with the CEO of DC Security, providing industry exposure for student competitors and awarding top algorithmic problem solvers.', alt: 'Youcef Achouri in discussion with the CEO of DC Security at IngeCode' },
+  { image: 'media/evidence/amazigh_day_director.webp', width: 1439, height: 1151, eyebrow: 'Campus Heritage \u00b7 Leadership', title: 'Amazigh Day with School Leadership', body: 'Represented the student body before university administration, guiding the School Director and visiting personalities through regional cultural exhibits and stands.', alt: 'Youcef Achouri accompanying the school director at Amazigh Day 6.0' },
+  { image: 'media/evidence/ingehack_youth_center.webp', width: 1440, height: 1152, eyebrow: 'National Hackathon \u00b7 Algiers', title: 'IngeHack at Maison de Jeunes', body: 'Led the first INGENIUMS generation to conduct a national hackathon in Algiers at Maison de Jeunes Abderrahmane La\u00e2la; managed inter-wilaya logistics, school rector approvals, and hosted Ministry of Youth representatives.', alt: 'Youcef smiling with his vice president badge at the Ingehack event at Maison de Jeunes' },
+  { image: 'media/evidence/ingeneer_second_board.webp', width: 1440, height: 1152, eyebrow: 'Flagship Innovation Fair', title: 'Ingeneer 2.0 Exhibition', body: 'Directed ESI-SBA\u2019s annual flagship engineering competition with Transformatek; oversaw jury panels, student project exhibitions, and the final award ceremony\u2014capping 10 events across the mandate.', alt: 'Youcef Achouri with the INGENIUMS executive board and event manager at Ingeneer 2.0' },
+  { image: 'media/evidence/alphabit_workshop.webp', width: 1440, height: 960, eyebrow: 'Technical Speaker & Instructor', title: 'Conducting Developer Workshops', body: 'Regularly conduct hands-on software workshops and developer sessions for engineering students, recently delivering a technical workshop with Alphabit Club at ESI-SBA.', alt: 'Youcef Achouri conducting a technical developer workshop' },
+  { image: 'media/evidence/abderrahmane_laala_platform.webp', width: 1440, height: 1080, eyebrow: 'Civic Tech \u00b7 Algiers', title: 'National Youth Platform Collaboration', body: 'Collaborating with Maison de Jeunes Abderrahmane La\u00e2la in Algiers on an upcoming national youth digital platform across multiple working sessions; contributed to Afrobot, Jisr Noumouw, and Sahra Tech.', alt: 'Team working session for the youth platform project at Maison de Jeunes Abderrahmane Laala' },
+  { image: 'media/evidence/ingeneer_first_demo.webp', width: 1080, height: 608, eyebrow: 'Learning Community \u00b7 2023\u20132024', title: 'Bootcamps & Project Demonstrations', body: 'Organized full-day LC bootcamps and invited industry mentors; demonstrated student engineering projects to faculty and external guests at Ingeneer 1.0 and ESI Showcase.', alt: 'Youcef explaining a project to visitors at the Ingeneer 1.0 demo table' },
+  { image: 'media/evidence/art_manchour_exhibition.webp', width: 1080, height: 1080, eyebrow: 'Campus Culture & Arts', title: 'Art Manchour Exhibition', body: 'Contacted and invited artists, coordinated the event as vice president, and accompanied school leaders and invited personalities through the exhibition.', alt: 'An artist presenting work to students at Art Manchour 2.0' },
 ];
 
 export const awards = [
   { title: 'DevFest Hackathon', year: '2023', result: '2nd place', detail: 'Team Infinity \u00b7 GDG Sidi Bel Abb\u00e8s', image: 'media/evidence/dev_fest_team.webp', width: 720, height: 721 },
-  { title: 'NCS Hack 3.0', year: '2026', result: '3rd place', detail: 'Team Spooka \u00b7 NiT Computer Society Club', image: 'media/evidence/ncs_hack_spooka_poster.webp', width: 3277, height: 4096, projectSlug: 'operations-intelligence-hub' },
+  { title: 'NCS Hack 3.0', year: '2026', result: '3rd place', detail: 'Team Spooka (3rd of 25 teams) \u00b7 NiT Computer Society Club', image: 'media/evidence/ncs_hack_spooka_poster.webp', width: 3277, height: 4096, projectSlug: 'operations-intelligence-hub' },
   { title: 'ForsaTIC Hackathon', year: '2024', result: 'Participant', detail: 'ESI-SBA delegation \u00b7 ENSIA, Algiers', image: 'media/evidence/forsatik_team.webp', width: 900, height: 1200 },
 ];

@@ -6,13 +6,14 @@ import { awards, community, projects } from '../src/data';
 import { identity, profiles } from '../src/profiles';
 import { Site } from '../src/site';
 import type { Page } from '../src/site';
+import { realModelEvidenceAssets } from '../src/real-model-evidence';
 
 const dist = resolve('dist');
 const base = process.env.SITE_BASE ?? '/';
 if (!/^\/(?:[a-zA-Z0-9_-]+\/)*$/.test(base)) throw new Error('SITE_BASE must start and end with a slash');
-const origin = process.env.SITE_ORIGIN?.replace(/\/$/, '');
+const origin = (process.env.SITE_ORIGIN ?? 'https://youcef-achouri.vercel.app').replace(/\/$/, '');
 if (origin && new URL(origin).origin !== origin) throw new Error('SITE_ORIGIN must be an origin without a path');
-const privateReview = process.env.SITE_PUBLIC !== 'true';
+const privateReview = process.env.SITE_PUBLIC === 'false';
 
 async function writeOutput(path: string, content: string) {
   const destination = join(dist, path);
@@ -66,7 +67,8 @@ type Route = { path: string; page: Page; title: string; description: string };
 const routes: Route[] = [
   ...profiles.map(profile => ({ path: profile.slug ? `focus/${profile.slug}/` : '', page: { kind: 'home', profile } as const, title: profile.title, description: profile.description })),
   ...projects.map(project => ({ path: `work/${project.slug}/`, page: { kind: 'case', project } as const, title: project.title, description: project.summary })),
-  { path: 'resume/', page: { kind: 'resume' }, title: 'Curriculum vitae', description: 'General and role-specific CVs for Achouri Youcef Islem.' },
+  { path: 'archive/', page: { kind: 'archive' }, title: 'Complete engineering archive (2023–2026)', description: 'Chronological catalogue from hand-coded frontend interfaces and R3F 3D apps to AI research and digital twins.' },
+  { path: 'resume/', page: { kind: 'resume' }, title: 'Curriculum vitae', description: 'Official English and French PFE internship CVs for Achouri Youcef Islem.' },
   { path: '404.html', page: { kind: 'missing' }, title: 'Page not found', description: 'Return to the engineering portfolio.' },
 ];
 
@@ -75,14 +77,17 @@ async function build() {
   const cssName = `assets/site-${createHash('sha256').update(css).digest('hex').slice(0, 10)}.css`;
   await writeOutput(cssName, css);
   const publicAssets = new Set([
-    'mark.svg', 'media/virtual-staging/synthetic-viewer.webp', 'media/dqn-results.png',
+    'mark.svg', 'media/virtual-staging/synthetic-viewer.webp', 'media/virtual-staging/real-view.webp',
+    'media/virtual-staging/scan_0_densified_diagnostic.webp', 'media/dqn-results.png',
     'media/evidence/welcome_day_stage.webp',
     'media/azurid-capture-isolation.svg', 'media/azurid-capture-isolation-mobile.svg',
+    ...realModelEvidenceAssets,
     ...community.map(story => story.image),
     ...awards.map(award => award.image),
     ...projects.flatMap(project => project.evidenceImages?.map(evidence => evidence.path) ?? []),
     ...projects.flatMap(project => project.walkthroughMedia ? [project.walkthroughMedia.path, project.walkthroughMedia.poster] : []),
-    ...profiles.map(profile => `resumes/${profile.pdf}`),
+    'resumes/Youcef_Achouri_CV_English.pdf',
+    'resumes/Youcef_Achouri_CV_Francais.pdf',
   ]);
   await Promise.all([
     copyOutput('node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2', 'fonts/manrope.woff2'),
@@ -113,6 +118,7 @@ async function build() {
   <meta property="og:title" content="${title}">
   <meta property="og:description" content="${description}">
   <meta property="og:type" content="website">
+  <meta property="og:image" content="${escapeHtml(`${origin}${base}media/evidence/welcome_day_stage.webp`)}">
   ${canonical ? `<link rel="canonical" href="${escapeHtml(canonical)}">\n  <meta property="og:url" content="${escapeHtml(canonical)}">` : ''}
   <link rel="icon" href="${base}mark.svg" type="image/svg+xml">
   <link rel="stylesheet" href="${base}${cssName}">
@@ -122,14 +128,18 @@ async function build() {
     await writeOutput(route.path.endsWith('.html') ? route.path : `${route.path}index.html`, document);
   }));
 
-  await writeOutput('robots.txt', `User-agent: *\n${privateReview ? 'Disallow: /' : 'Allow: /'}\n`);
+  await writeOutput('robots.txt', `User-agent: *\n${privateReview ? 'Disallow: /' : 'Allow: /'}\n${!privateReview && origin ? `Sitemap: ${origin}${base}sitemap.xml\n` : ''}`);
+  if (!privateReview && origin) {
+    const urls = routes.filter(r => r.page.kind !== 'missing').map(r => `  <url><loc>${escapeHtml(`${origin}${base}${r.path}`)}</loc></url>`).join('\n');
+    await writeOutput('sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`);
+  }
   await writeOutput('.nojekyll', '');
   for (const asset of await readdir(join(dist, 'assets'), { withFileTypes: true })) {
     if (asset.isFile() && /^site-[0-9a-f]{10}\.css$/.test(asset.name) && `assets/${asset.name}` !== cssName) {
       await unlink(join(dist, 'assets', asset.name));
     }
   }
-  console.log(`Built ${routes.length} routes and ${profiles.length} CV downloads.`);
+  console.log(`Built ${routes.length} routes (${privateReview ? 'private' : 'public'} mode).`);
 }
 
 build().catch(error => {

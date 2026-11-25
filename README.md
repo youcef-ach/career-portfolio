@@ -1,6 +1,6 @@
 # Achouri Youcef Islem · Engineering portfolio
 
-One general portfolio and three focused views for applied AI, research engineering, and software and spatial systems. Each view links to its matching one-page CV. Thirteen case studies and authentic community stories are shared across the relevant views.
+Static engineering and research portfolio for Achouri Youcef Islem (ESI-SBA, AI & Data Science), linking public English and French one-page CVs, 15 project case studies, and a complete 26-entry project archive (`2023–2026`).
 
 ```sh
 npm ci
@@ -9,18 +9,17 @@ npm run build
 npm run preview
 ```
 
-The build uses React to render static HTML. The case studies work without an application server. `dist/` contains the pages, fonts, images, walkthrough video and CVs. The virtual-staging case study summarizes a Matterport Pro3 sample experiment. Its interactive furniture demo uses allowlisted synthetic room assets and precomputed model outputs. The AzuridTwinUp video uses synthetic inspection bays and includes an on-page transcript. The event photos came from the candidate’s existing archive.
+## Architecture & content
 
-Update the portfolio profiles in `src/profiles.ts`, the case studies and community records in `src/data.ts`, and the CVs in `public/resumes/`. `SITE_BASE` controls the path prefix and defaults to `/`. Set `SITE_BASE=/cv/` for a GitHub Pages project site at that path. Set `SITE_ORIGIN` to the deployment origin to populate canonical URLs.
+The static generator (`scripts/build.tsx`) uses React server rendering to emit static HTML under `dist/` (`src/data.ts` for case studies and community records, `src/profiles.ts` for focus views and the chronological archive, and `public/resumes/` for English and French PDF CVs).
 
-## Deployment and evidence
+- `SITE_BASE` defaults to `/` (`SITE_BASE=/cv/` for subpath hosting).
+- `SITE_ORIGIN` sets canonical and sitemap URLs (defaults to `https://youcef-achouri.vercel.app`).
+- `SITE_PUBLIC` defaults to `true` (`index,follow`, `Allow: /`, and `sitemap.xml`). Set `SITE_PUBLIC=false` for private review builds (`noindex,nofollow`).
 
-The current deployment is [youcef-achouri.vercel.app](https://youcef-achouri.vercel.app/), using the existing Vercel project and `vercel.json`. The `.vercel/` account binding is local and ignored. The old `.openai/hosting.json` record is historical, not the current deployment target.
+## Deployment and evidence boundaries
 
-The default build requests `noindex,nofollow`. This is a public website: search-engine directives do not restrict access. Matterport sample imagery and derived masks are held out of this release pending reuse confirmation. Raw E57 files, industrial customer captures and private organization source are excluded.
-
-The AzuridTwinUp case study links an earlier synthetic recording and an email contact. The newer local authenticated R5 integration and preparation pipeline await execution and end-to-end verification.
-
-Majara and e-RCP describe the candidate's frontend work without publishing their private organizational code. DQN links to 90 archived runs, provenance and corrected results. No claim of production certification, comprehensive test coverage or measured accessibility compliance is made.
-
-For a release, run typecheck and build, inspect desktop/mobile layouts, check local links, and compare the four deployed PDF hashes with the reviewed CV files. Keep CV facts, case-study scope and download versions synchronized.
+- Live deployment: [youcef-achouri.vercel.app](https://youcef-achouri.vercel.app/) via `vercel.json` (`.vercel/` and `.env*` remain local and ignored).
+- Private organization code (`AzuridTwinUp`, `Majara`, `e-RCP`) and confidential institutional training data (`Qwen 2.5 7B LoRA`) remain excluded; case studies document system scope, synthetic/diagnostic previews, and limitations.
+- Matterport sample imagery (`public/media/virtual-staging/real-view.webp` and `real-model-evidence/`) stays excluded from version control via `.gitignore`.
+- Before publishing a release, verify `npm run typecheck && npm run build`, inspect mobile/desktop viewports, and confirm live `/resumes/*.pdf` hashes match `outputs/cv/`.
